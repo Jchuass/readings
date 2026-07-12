@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Celestial Fortune ✨</title>
+<style>
+:root{
+  --bg1:#160428; --bg2:#3b1268; --bg3:#5b21a8;
+  --gold:#f0c96e; --gold2:#ffe9b8;
+  --lav:#d9c8f5; --white:#fdf9ff;
+  --card:rgba(255,255,255,.07); --cardline:rgba(240,201,110,.35);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:Georgia,'Times New Roman',serif;
+  min-height:100vh; color:var(--white);
+  background:radial-gradient(1200px 800px at 50% -10%, var(--bg3) 0%, var(--bg2) 45%, var(--bg1) 100%);
+  background-attachment:fixed;
+  overflow-x:hidden;
+}
+#stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.star{position:absolute;background:#fff;border-radius:50%;animation:tw 3s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.15}50%{opacity:.9}}
+.wrap{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:24px 18px 60px}
+.page{display:none;animation:fadein .5s ease}
+.page.active{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+h1{font-size:2.4rem;text-align:center;color:var(--gold2);letter-spacing:.06em;text-shadow:0 0 24px rgba(240,201,110,.45)}
+.subtitle{text-align:center;color:var(--lav);font-style:italic;margin:8px 0 4px}
+.angel-holder{display:flex;justify-content:center;margin:6px 0 2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-top:22px}
+.mcard{
+  background:var(--card);border:1px solid var(--cardline);border-radius:16px;
+  padding:18px 16px;cursor:pointer;transition:.25s;text-align:center;
+  backdrop-filter:blur(6px);
+}
+.mcard:hover{transform:translateY(-4px);background:rgba(255,255,255,.12);box-shadow:0 8px 30px rgba(240,201,110,.18);border-color:var(--gold)}
+.mcard .ic{font-size:2rem;display:block;margin-bottom:8px}
+.mcard h3{color:var(--gold2);font-size:1.05rem;margin-bottom:6px;letter-spacing:.03em}
+.mcard p{color:var(--lav);font-size:.85rem;line-height:1.45}
+.back{
+  background:none;border:1px solid var(--cardline);color:var(--gold2);
+  padding:7px 16px;border-radius:20px;cursor:pointer;font-family:inherit;font-size:.9rem;margin-bottom:14px;
+}
+.back:hover{background:rgba(240,201,110,.15)}
+.panel{
+  background:var(--card);border:1px solid var(--cardline);border-radius:18px;
+  padding:26px 24px;backdrop-filter:blur(6px);
+}
+.panel h2{color:var(--gold2);text-align:center;font-size:1.6rem;margin-bottom:4px}
+.panel .desc{color:var(--lav);text-align:center;font-style:italic;margin-bottom:18px;font-size:.95rem}
+.form{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:18px}
+.form label{display:flex;flex-direction:column;gap:5px;color:var(--lav);font-size:.85rem}
+.form input,.form select{
+  background:rgba(0,0,0,.3);border:1px solid var(--cardline);color:var(--white);
+  padding:9px 12px;border-radius:10px;font-family:inherit;font-size:.95rem;min-width:170px;
+}
+.gbtn{
+  display:block;margin:6px auto 0;
+  background:linear-gradient(135deg,#b8873a,var(--gold),#b8873a);
+  color:#2a0d47;font-weight:bold;border:none;padding:12px 34px;border-radius:26px;
+  font-family:inherit;font-size:1.05rem;letter-spacing:.05em;cursor:pointer;transition:.2s;
+}
+.gbtn:hover{transform:scale(1.04);box-shadow:0 6px 26px rgba(240,201,110,.4)}
+.result{margin-top:22px}
+.rcard{
+  background:rgba(20,4,40,.55);border:1px solid var(--cardline);border-radius:14px;
+  padding:18px 20px;margin-bottom:14px;animation:fadein .6s ease;
+}
+.rcard h4{color:var(--gold);margin-bottom:8px;font-size:1.1rem}
+.rcard p{color:var(--white);line-height:1.65;font-size:.97rem}
+.rcard .tag{color:var(--lav);font-size:.82rem;font-style:italic}
+.bignum{font-size:3rem;color:var(--gold2);text-align:center;text-shadow:0 0 18px rgba(240,201,110,.5)}
+.tarot-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:10px}
+.tcard{
+  width:150px;background:linear-gradient(160deg,#2a0d47,#4a1580);
+  border:2px solid var(--gold);border-radius:12px;padding:14px 10px;text-align:center;
+  animation:flip .7s ease;box-shadow:0 6px 22px rgba(0,0,0,.5);
+}
+@keyframes flip{from{transform:rotateY(90deg)}to{transform:rotateY(0)}}
+.tcard .sym{font-size:2.2rem}
+.tcard .nm{color:var(--gold2);font-size:.95rem;margin:6px 0 2px}
+.tcard .pos{color:var(--lav);font-size:.75rem;font-style:italic}
+.rev{color:#ff9d9d !important}
+.pillars{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:14px}
+.pillar{
+  background:linear-gradient(180deg,rgba(240,201,110,.16),rgba(240,201,110,.04));
+  border:1px solid var(--cardline);border-radius:12px;padding:12px 16px;text-align:center;min-width:96px;
+}
+.pillar .plab{color:var(--lav);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase}
+.pillar .pch{font-size:1.7rem;color:var(--gold2);margin:4px 0;line-height:1.3}
+.pillar .pen{color:var(--white);font-size:.8rem}
+.hexlines{display:flex;flex-direction:column-reverse;gap:6px;width:120px;margin:0 auto 12px}
+.hl{height:10px;border-radius:3px;background:var(--gold)}
+.hl.yin{background:linear-gradient(90deg,var(--gold) 42%,transparent 42%,transparent 58%,var(--gold) 58%)}
+.hl.chg{box-shadow:0 0 10px 2px rgba(255,180,220,.8)}
+.pyr{text-align:center;font-size:1.15rem;letter-spacing:.35em;color:var(--gold2);line-height:2}
+.rcard a{color:var(--gold2);text-decoration:underline;text-underline-offset:3px}
+.rcard a:hover{color:var(--gold)}
+.linkrow{margin-top:8px;line-height:1.8}
+.disclaimer{text-align:center;color:rgba(217,200,245,.55);font-size:.78rem;margin-top:26px;font-style:italic}
+/* shooting star above the angel */
+.sky{position:relative;height:70px;margin-bottom:-40px;pointer-events:none;overflow:visible}
+.shooting-star{
+  position:absolute;top:12px;left:-12%;width:4px;height:4px;border-radius:50%;
+  background:#fff;box-shadow:0 0 8px 2px rgba(255,255,255,.9),0 0 20px 6px rgba(240,201,110,.5);
+  animation:shoot 9s ease-out infinite;
+}
+.shooting-star::before{
+  content:"";position:absolute;top:1px;right:2px;width:130px;height:2px;
+  transform:translateY(-0px);
+  background:linear-gradient(to left,rgba(255,255,255,.95),rgba(240,201,110,.5),transparent);
+}
+@keyframes shoot{
+  0%{transform:translate(0,0) rotate(12deg);opacity:0}
+  2%{opacity:1}
+  14%{transform:translate(115vw,26vh) rotate(12deg);opacity:0}
+  100%{transform:translate(115vw,26vh) rotate(12deg);opacity:0}
+}
+@media(prefers-reduced-motion:reduce){.shooting-star{animation:none;opacity:0}}
+.centerbtns{text-align:center;margin-top:10px}
+@media(max-width:520px){h1{font-size:1.7rem}.tcard{width:120px}}
+/* ---------- print / export as PDF ---------- */
+#print-head{display:none}
+.exbtn{
+  background:none;border:1px solid var(--cardline);color:var(--gold2);
+  padding:10px 26px;border-radius:24px;cursor:pointer;font-family:inherit;font-size:.95rem;
+}
+.exbtn:hover{background:rgba(240,201,110,.15)}
+@media print{
+  #stars,.sky,.back,.form,.centerbtns,#export-row{display:none!important}
+  .disclaimer{color:#8a6fb5!important;font-size:.72rem}
+  body{background:#fff!important;color:#2a0d47}
+  .wrap{max-width:100%;padding:0}
+  .panel{background:none;border:none;padding:0;backdrop-filter:none}
+  #print-head{display:block!important;text-align:center;color:#7a3fbf;font-style:italic;margin-bottom:10px;font-size:.9rem}
+  .panel h2{color:#5b21a8}
+  .panel .desc{color:#6b4d9e}
+  .rcard{background:#faf6ff!important;border:1px solid #c9aef0;page-break-inside:avoid;animation:none}
+  .rcard p{color:#2a0d47}
+  .rcard h4{color:#7a3fbf}
+  .rcard .tag{color:#8a6fb5}
+  .rev{color:#c0392b!important}
+  .bignum{color:#7a3fbf;text-shadow:none}
+  .tcard{background:#fff;border-color:#7a3fbf;box-shadow:none;animation:none}
+  .tcard .nm{color:#5b21a8}.tcard .pos{color:#8a6fb5}.tcard .sym{color:#5b21a8}
+  .pillar{background:#faf6ff;border-color:#c9aef0}
+  .pillar .pch{color:#5b21a8}.pillar .pen{color:#2a0d47}.pillar .plab{color:#8a6fb5}
+  .hl{background:#7a3fbf;box-shadow:none}
+  .hl.yin{background:linear-gradient(90deg,#7a3fbf 42%,transparent 42%,transparent 58%,#7a3fbf 58%)}
+  .pyr{color:#5b21a8}
+}
+</style>
+</head>
+<body>
+<div id="stars"></div>
+<div class="wrap">
+
+<!-- ============ HOME ============ -->
+<div class="page active" id="page-home">
+  <div class="sky"><div class="shooting-star"></div></div>
+  <div class="angel-holder">
+    <svg width="290" height="250" viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg" aria-label="Angel">
+      <defs>
+        <radialGradient id="glow" cx="50%" cy="42%" r="55%">
+          <stop offset="0%" stop-color="#f0c96e" stop-opacity=".55"/>
+          <stop offset="60%" stop-color="#a86ef0" stop-opacity=".18"/>
+          <stop offset="100%" stop-color="#a86ef0" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="wing" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#fff"/>
+          <stop offset="100%" stop-color="#d9c8f5"/>
+        </linearGradient>
+        <linearGradient id="gown" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#fdf9ff"/>
+          <stop offset="100%" stop-color="#c9aef0"/>
+        </linearGradient>
+      </defs>
+      <circle cx="150" cy="118" r="118" fill="url(#glow)"/>
+      <!-- left wing -->
+      <path d="M128 105 C 85 70, 40 68, 18 92 C 45 94, 52 100, 38 112 C 62 110, 70 116, 60 130 C 82 126, 92 132, 86 146 C 104 140, 118 134, 128 122 Z" fill="url(#wing)" opacity=".95"/>
+      <!-- right wing -->
+      <path d="M172 105 C 215 70, 260 68, 282 92 C 255 94, 248 100, 262 112 C 238 110, 230 116, 240 130 C 218 126, 208 132, 214 146 C 196 140, 182 134, 172 122 Z" fill="url(#wing)" opacity=".95"/>
+      <!-- halo -->
+      <ellipse cx="150" cy="62" rx="26" ry="8" fill="none" stroke="#f0c96e" stroke-width="4"/>
+      <!-- head -->
+      <circle cx="150" cy="88" r="16" fill="#fdf0dc"/>
+      <path d="M134 84 q16 -14 32 0 q-2 -16 -16 -16 q-14 0 -16 16" fill="#8a5a2b"/>
+      <!-- body / gown -->
+      <path d="M150 104 C 128 118, 120 160, 116 208 Q 150 222, 184 208 C 180 160, 172 118, 150 104 Z" fill="url(#gown)"/>
+      <!-- arms folded -->
+      <path d="M134 128 Q 150 142 166 128 Q 160 148 150 148 Q 140 148 134 128" fill="#fdf0dc"/>
+      <!-- sparkles -->
+      <g fill="#ffe9b8">
+        <path d="M60 40 l3 8 8 3 -8 3 -3 8 -3 -8 -8 -3 8 -3 z"/>
+        <path d="M244 44 l2.5 7 7 2.5 -7 2.5 -2.5 7 -2.5 -7 -7 -2.5 7 -2.5 z"/>
+        <path d="M40 170 l2 6 6 2 -6 2 -2 6 -2 -6 -6 -2 6 -2 z"/>
+        <path d="M262 168 l2 6 6 2 -6 2 -2 6 -2 -6 -6 -2 6 -2 z"/>
+        <circle cx="90" cy="24" r="2"/><circle cx="212" cy="20" r="2"/><circle cx="150" cy="14" r="2.5"/>
+      </g>
+    </svg>
+  </div>
+  <h1>Celestial Fortune</h1>
+  <p class="subtitle">Choose a path, and let the universe whisper your reading</p>
+  <div class="grid" id="menu"></div>
+  <p class="disclaimer">✦ Disclaimer: Celestial Fortune is for entertainment purposes only. Readings are offered in the spirit of reflection and fun, and are not medical, legal, financial, relationship or professional advice. ✦</p>
+</div>
+
+<!-- ============ MODULE PAGE ============ -->
+<div class="page" id="page-mod">
+  <button class="back" onclick="goHome()">← Back to paths</button>
+  <div class="panel">
+    <div id="print-head">✨ Celestial Fortune · <span id="print-date"></span></div>
+    <h2 id="mod-title"></h2>
+    <p class="desc" id="mod-desc"></p>
+    <div class="form" id="mod-form"></div>
+    <div class="centerbtns"><button class="gbtn" id="mod-go">Reveal My Fortune ✨</button></div>
+    <div class="result" id="mod-result"></div>
+    <div class="centerbtns" id="export-row" style="display:none;margin-top:18px">
+      <button class="exbtn" onclick="exportPDF()">Export as PDF 📄</button>
+    </div>
+    <p class="disclaimer">✦ For entertainment purposes only. These readings are offered for reflection and enjoyment — they are not medical, legal, financial, relationship or professional advice, and should not be used to make important life decisions. ✦</p>
+  </div>
+</div>
+
+</div>
+<script>
+/* ---------- starfield ---------- */
+(function(){const s=document.getElementById('stars');for(let i=0;i<90;i++){const d=document.createElement('div');d.className='star';const z=Math.random()*2+1;d.style.cssText=`width:${z}px;height:${z}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*3}s`;s.appendChild(d);}})();
+
+/* ---------- shared helpers ---------- */
+const $=id=>document.getElementById(id);
+function reduce(n,keepMaster=true){while(n>9){if(keepMaster&&(n===11||n===22||n===33))return n;n=String(n).split('').reduce((a,c)=>a+ +c,0);}return n;}
+function digitsOf(str){return str.replace(/\D/g,'').split('').map(Number);}
+function seedRand(){return Math.random();}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+const NUM_MEANINGS={
+1:"The Pioneer — independent, ambitious and original. You are here to lead, initiate and stand on your own convictions. Watch for stubbornness; your gift is courage.",
+2:"The Peacemaker — sensitive, diplomatic and cooperative. You are here to build bridges and harmonize. Watch for over-sensitivity; your gift is empathy.",
+3:"The Creative — expressive, joyful and imaginative. You are here to communicate and uplift others. Watch for scattered energy; your gift is inspiration.",
+4:"The Builder — practical, loyal and disciplined. You are here to create solid foundations. Watch for rigidity; your gift is reliability.",
+5:"The Adventurer — freedom-loving, adaptable and curious. You are here to experience change and progress. Watch for restlessness; your gift is versatility.",
+6:"The Nurturer — responsible, loving and protective. You are here to care for family and community. Watch for over-giving; your gift is healing.",
+7:"The Seeker — analytical, spiritual and wise. You are here to search for deeper truth. Watch for isolation; your gift is insight.",
+8:"The Powerhouse — ambitious, authoritative and abundant. You are here to master the material world. Watch for workaholism; your gift is manifestation.",
+9:"The Humanitarian — compassionate, idealistic and generous. You are here to serve and complete cycles. Watch for martyrdom; your gift is universal love.",
+11:"Master Number 11, The Illuminator — intuitive and inspirational. You carry a heightened spiritual antenna and are here to enlighten others. Ground yourself; your gift is vision.",
+22:"Master Number 22, The Master Builder — visionary and practical at once. You can turn big dreams into reality on a grand scale. Pace yourself; your gift is legacy.",
+33:"Master Number 33, The Master Teacher — devoted to uplifting humanity through compassion. Protect your energy; your gift is selfless guidance."};
+
+/* extended number details: love / work / growth */
+const NUM_DETAILS={
+1:{love:"In love you need respect and space. You protect the people you love, but remember that a partnership is a team effort.",work:"At work you do best when leading or building something of your own. Micromanagement drains you; freedom brings out your best.",growth:"Growth tip: asking for help is a strength, not a weakness."},
+2:{love:"In love you are devoted, gentle and loyal. Just be careful not to lose yourself in the other person's moods.",work:"At work you shine as the peacemaker and trusted right hand. Teams run smoothly because of you.",growth:"Growth tip: your sensitivity is a strength — stop apologizing for it."},
+3:{love:"In love you bring fun and romance. The relationship deepens when you also share the feelings under the surface.",work:"You do well in creative work — writing, design, teaching, performing.",growth:"Growth tip: finish what you start. Focus beats scattered energy."},
+4:{love:"In love you show care through actions and reliability rather than big speeches. Steady and faithful.",work:"At work you are the backbone: systems, structure and quality. You build things that last.",growth:"Growth tip: allow some flexibility — bending is not breaking."},
+5:{love:"In love you need adventure and room to breathe. The right partner explores with you instead of fencing you in.",work:"You do best in varied, fast-moving work — sales, travel, media — anything but dull routine.",growth:"Growth tip: freedom works best when you also have some roots."},
+6:{love:"In love you are caring and romantic — sometimes too responsible for everyone else's happiness.",work:"You shine where care meets skill: healing, teaching, counselling, hospitality, design.",growth:"Growth tip: you can't pour from an empty cup. Learn to receive too."},
+7:{love:"In love you open up slowly. You need a partner who is comfortable with quiet and depth.",work:"You are the analyst and specialist — you go deep rather than wide.",growth:"Growth tip: time alone restores you, but too much of it isolates you. Know the difference."},
+8:{love:"In love you show care by providing and protecting. Remember that your presence matters more than presents.",work:"You are built for leadership, business and money matters. Ambition drives you and results speak for you.",growth:"Growth tip: share power — it grows when you give it away."},
+9:{love:"In love you are romantic and giving. Be careful not to turn love into rescuing.",work:"You do well in work that serves others — service, the arts, good causes.",growth:"Growth tip: endings are natural. Let the past go."},
+11:{love:"In love you want a deep, soul-level bond. Choose someone who can meet that depth.",work:"You inspire people — teaching, healing, art or spiritual work suit you.",growth:"Growth tip: big visions need small daily steps."},
+22:{love:"In love you build for the long term. Your loyalty is measured in decades.",work:"You can turn big dreams into real, lasting things — founder, architect, organizer.",growth:"Growth tip: don't wait for perfect. Build the dream in stages."},
+33:{love:"In love you give more than most. Choose partners who give back.",work:"You are a natural mentor and teacher, lifting others up on a wide scale.",growth:"Growth tip: boundaries keep your kindness sustainable."}};
+function numDetailHTML(n){const d=NUM_DETAILS[n];return d?`<p style="margin-top:8px">💗 ${d.love}</p><p style="margin-top:8px">💼 ${d.work}</p><p style="margin-top:8px">🌱 ${d.growth}</p>`:'';}
+
+/* trigram imagery for I Ching */
+const TRIGRAMS={7:["☰ Qián","Heaven","creative power — leadership and initiative"],0:["☷ Kūn","Earth","receptiveness — patience and support"],1:["☳ Zhèn","Thunder","movement — the push that gets things started"],2:["☵ Kǎn","Water","depth — persistence through difficulty"],4:["☶ Gèn","Mountain","stillness — knowing when to stop"],3:["☱ Duì","Lake","joy — openness and encouragement"],5:["☲ Lí","Fire","clarity — insight and attention"],6:["☴ Xùn","Wind","gentle influence — steady, quiet persuasion"]};
+
+/* seasonal strength of the Day Master (BaZi/Saju) */
+function seasonOfBranch(b){return [ "Water","Earth","Wood","Wood","Earth","Fire","Fire","Earth","Metal","Metal","Earth","Water"][b];}
+function seasonStrength(dmEl,monthBranch){
+  const se=seasonOfBranch(monthBranch);
+  const seasonName={Wood:"spring",Fire:"summer",Metal:"autumn",Water:"winter",Earth:"the earth months between seasons"}[se];
+  if(se===dmEl)return`You were born in ${seasonName}, the season of your own element. This makes you a <b>strong Day Master</b>: confident and self-reliant. Your lesson is to make room for others, because standing firm comes easily to you.`;
+  if(GEN[se]===dmEl)return`You were born in ${seasonName}, whose ${se} energy <b>feeds</b> your element. Life tends to support you — help, mentors and second chances find you. Accept them gladly.`;
+  if(GEN[dmEl]===se)return`You were born in ${seasonName}, a season your element <b>gives energy to</b>. You are generous and productive, but you can run empty. For you, rest is not a luxury — it is a necessity.`;
+  if(CTRL[dmEl]===se)return`You were born in ${seasonName}, a season your element has to <b>work against</b>. Success comes through steady effort rather than luck — and that effort makes you unusually capable.`;
+  return`You were born in ${seasonName}, whose ${se} energy <b>pushes against</b> your element. Your story is one of resilience: challenges come early, and so does the strength to beat them. Good allies multiply your power.`;
+}
+function yinYangCount(p){let yang=0,yin=0;for(const k in p){(p[k][0]%2===0)?yang++:yin++;(p[k][1]%2===0)?yang++:yin++;}return{yang,yin};}
+const PILLAR_MEANINGS=`<div class="rcard"><h4>How to Read Your Four Pillars</h4><p>Each pillar covers one part of life. The <b>Year</b> pillar is your roots: family background and childhood. The <b>Month</b> pillar covers your parents, education and career field. The <b>Day</b> pillar is you — the top character is your core self, and the one below it is the spouse palace, the partner energy you attract. The <b>Hour</b> pillar covers your children, your dreams and your later years.</p></div>`;
+
+/* ---------- stems & branches ---------- */
+const STEMS=[["甲","Jiă","Gap","Yang Wood"],["乙","Yĭ","Eul","Yin Wood"],["丙","Bĭng","Byeong","Yang Fire"],["丁","Dīng","Jeong","Yin Fire"],["戊","Wù","Mu","Yang Earth"],["己","Jĭ","Gi","Yin Earth"],["庚","Gēng","Gyeong","Yang Metal"],["辛","Xīn","Sin","Yin Metal"],["壬","Rén","Im","Yang Water"],["癸","Guĭ","Gye","Yin Water"]];
+const BRANCHES=[["子","Zĭ","Ja","Rat","Water"],["丑","Chŏu","Chuk","Ox","Earth"],["寅","Yín","In","Tiger","Wood"],["卯","Măo","Myo","Rabbit","Wood"],["辰","Chén","Jin","Dragon","Earth"],["巳","Sì","Sa","Snake","Fire"],["午","Wŭ","O","Horse","Fire"],["未","Wèi","Mi","Goat","Earth"],["申","Shēn","Sin","Monkey","Metal"],["酉","Yŏu","Yu","Rooster","Metal"],["戌","Xū","Sul","Dog","Earth"],["亥","Hài","Hae","Pig","Water"]];
+const ELEM_DESC={
+Wood:"growth, kindness, creativity and vision — like a tree reaching upward",
+Fire:"passion, warmth, charisma and expression — a flame that lights others",
+Earth:"stability, trust, patience and nourishment — the ground others stand on",
+Metal:"clarity, discipline, justice and refinement — a blade polished bright",
+Water:"wisdom, adaptability, intuition and depth — a river finding its way"};
+
+function jdn(y,m,d){const a=Math.floor((14-m)/12),y2=y+4800-a,m2=m+12*a-3;return d+Math.floor((153*m2+2)/5)+365*y2+Math.floor(y2/4)-Math.floor(y2/100)+Math.floor(y2/400)-32045;}
+/* four pillars (solar-term boundaries approximated) */
+function fourPillars(y,m,d,hour){
+  const J=jdn(y,m,d);
+  const dayIdx=((J-2451551)%60+60)%60;               // 2000-01-07 = 甲子
+  // year: Lichun ≈ Feb 4
+  let yy=y; if(m<2||(m===2&&d<4)) yy--;
+  const yearIdx=((yy-4)%60+60)%60;
+  // month branch: solar month starts ≈ [Feb4]=Yin(2)…
+  let mi;
+  if(m===1&&d<6){mi=10;}                       // Zi month (from ~Dec 7)
+  else if((m===1&&d>=6)||(m===2&&d<4)){mi=11;} // Chou month
+  else{
+    const starts=[[2,4],[3,6],[4,5],[5,6],[6,6],[7,7],[8,8],[9,8],[10,8],[11,7],[12,7]];
+    mi=0;
+    for(let i=0;i<starts.length;i++){const[sm,sd]=starts[i];if(m>sm||(m===sm&&d>=sd))mi=i;}
+  }
+  const monthBranch=(2+mi)%12;
+  const yearStem=yearIdx%10;
+  const monthStem=((yearStem%5)*2+2+mi)%10;
+  let pillars={year:[yearStem,yearIdx%12],month:[monthStem,monthBranch],day:[dayIdx%10,dayIdx%12]};
+  if(hour!==null&&hour!==undefined&&hour!==""){
+    hour=+hour;
+    const hb=Math.floor(((hour+1)%24)/2)%12;
+    const hs=((dayIdx%10%5)*2+hb)%10;
+    pillars.hour=[hs,hb];
+  }
+  return pillars;
+}
+function elemOfStem(s){return STEMS[s][3].split(' ')[1];}
+function countElements(p){
+  const c={Wood:0,Fire:0,Earth:0,Metal:0,Water:0};
+  for(const k in p){c[elemOfStem(p[k][0])]++;c[BRANCHES[p[k][1]][4]]++;}
+  return c;
+}
+function pillarHTML(p,lang){ // lang: 'cn' or 'kr'
+  const labels={year:"Year",month:"Month",day:"Day",hour:"Hour"};
+  let h='<div class="pillars">';
+  for(const k of["year","month","day","hour"]){
+    if(!p[k])continue;const[s,b]=p[k];
+    const stemName=lang==='kr'?STEMS[s][2]:STEMS[s][1];
+    const brName=lang==='kr'?BRANCHES[b][2]:BRANCHES[b][1];
+    h+=`<div class="pillar"><div class="plab">${labels[k]}</div><div class="pch">${STEMS[s][0]}<br>${BRANCHES[b][0]}</div><div class="pen">${stemName} ${brName}<br>${STEMS[s][3].split(' ')[1]} · ${BRANCHES[b][3]}</div></div>`;
+  }
+  return h+'</div>';
+}
+function elementReading(c,name){
+  const sorted=Object.entries(c).sort((a,b)=>b[1]-a[1]);
+  const dom=sorted[0][0],weak=sorted[4][0];
+  let h=`<div class="rcard"><h4>Elemental Balance</h4><p>`;
+  h+=Object.entries(c).map(([e,n])=>`${e}: ${n}`).join(' · ');
+  h+=`</p><p style="margin-top:8px">Your chart is strongest in <b>${dom}</b> — the energy of ${ELEM_DESC[dom]}. `;
+  h+=`Your lightest element is <b>${weak}</b>; inviting more ${weak.toLowerCase()} qualities (${ELEM_DESC[weak].split('—')[0].trim()}) brings you balance.</p></div>`;
+  return h;
+}
+
+/* ---------- module definitions ---------- */
+const FORM_NAME='<label>Full name<input type="text" id="f-name" placeholder="e.g. Joycelyn Tan"></label>';
+const FORM_DOB='<label>Date of birth<input type="date" id="f-dob"></label>';
+const FORM_HOUR='<label>Hour of birth (optional)<select id="f-hour"><option value="">Unknown</option>'+Array.from({length:24},(_,i)=>`<option value="${i}">${String(i).padStart(2,"0")}:00 – ${String(i).padStart(2,"0")}:59</option>`).join('')+'</select></label>';
+const FORM_Q='<label>Your question (optional)<input type="text" id="f-q" placeholder="What should I focus on?"></label>';
+
+const MODULES={};
+
+/* ===== TAROT ===== */
+const TAROT=[["The Fool","🃏","new beginnings, spontaneity, a leap of faith","recklessness, hesitation, fear of the unknown"],
+["The Magician","🪄","manifestation, skill, resourcefulness","untapped talent, manipulation, scattered focus"],
+["The High Priestess","🌙","intuition, inner voice, hidden knowledge","secrets withheld, disconnection from intuition"],
+["The Empress","🌹","abundance, nurturing, creativity","creative block, dependence, smothering"],
+["The Emperor","👑","structure, authority, protection","rigidity, control issues, lack of discipline"],
+["The Hierophant","📜","tradition, guidance, shared values","rebellion, questioning convention"],
+["The Lovers","💞","love, alignment, meaningful choice","disharmony, imbalance, difficult decisions"],
+["The Chariot","🏇","willpower, victory, determination","lack of direction, forcing outcomes"],
+["Strength","🦁","courage, gentle power, compassion","self-doubt, raw emotion, burnout"],
+["The Hermit","🏮","introspection, wisdom, solitude","isolation, withdrawal, lost path"],
+["Wheel of Fortune","☸️","luck, cycles turning, destiny","resistance to change, a dip in the cycle"],
+["Justice","⚖️","fairness, truth, cause and effect","imbalance, avoidance of accountability"],
+["The Hanged Man","🙃","surrender, new perspective, pause","stalling, needless sacrifice"],
+["Death","🦋","transformation, endings that free you","clinging to the past, delayed change"],
+["Temperance","🕊️","balance, patience, blending opposites","excess, impatience, misalignment"],
+["The Devil","⛓️","attachment, temptation, shadow work","breaking free, reclaiming power"],
+["The Tower","🌩️","sudden change, revelation, awakening","averted disaster, fear of upheaval"],
+["The Star","⭐","hope, healing, renewed faith","discouragement, dimmed faith — rest and refill"],
+["The Moon","🌕","dreams, intuition, the unseen","clarity emerging, fears dissolving"],
+["The Sun","☀️","joy, vitality, success","temporary clouds, guarded optimism"],
+["Judgement","📯","rebirth, calling, self-forgiveness","self-criticism, ignoring the call"],
+["The World","🌍","completion, wholeness, arrival","almost there — one last loose end"]];
+const TAROT_ESSENCE=[
+"The Fool stands for fresh starts. It asks you to trust yourself and begin, even if you feel unready.",
+"The Magician means you already have the skills and tools you need. Now is the time to use them.",
+"The High Priestess is about intuition. Some answers cannot be reasoned out — you have to feel them.",
+"The Empress stands for care, comfort and creativity. It points to growth and things flourishing.",
+"The Emperor stands for structure and leadership. It asks you to bring order and take charge.",
+"The Hierophant stands for tradition and trusted advice. Sometimes the old, proven way is the right one.",
+"The Lovers is about love and important choices. It asks you to choose with your whole heart.",
+"The Chariot stands for willpower and drive. Stay focused and you will get where you are going.",
+"Strength is quiet courage. It is about staying calm and kind even when things are hard.",
+"The Hermit stands for time alone to think. Step back from the noise and you will see more clearly.",
+"The Wheel of Fortune reminds you that luck moves in cycles. Good times and hard times both pass.",
+"Justice is about fairness and truth. Actions have consequences, and honesty works in your favor.",
+"The Hanged Man asks you to pause and look at things from a new angle instead of pushing harder.",
+"Death is about endings that make room for something new. It means change, not disaster.",
+"Temperance stands for balance and patience. Right now the middle path works better than extremes.",
+"The Devil points to a habit, fear or attachment that has a hold on you. You have more freedom than you think.",
+"The Tower means sudden change that knocks down something shaky. It is unsettling, but it clears space for better.",
+"The Star is hope and healing after a hard time. Things are quietly getting better.",
+"The Moon means things are unclear right now. Move slowly, assume little, and wait for more light.",
+"The Sun is simple good news: joy, energy and success. Enjoy it.",
+"Judgement is a wake-up call. Forgive the past, listen to what life is asking of you, and rise to it.",
+"The World means completion. Something is coming full circle — finish it well and celebrate."];
+const TSPREADS={
+one:{name:"Single Card — Heart of the Matter",pos:[["The Heart of the Matter","One card holds the whole answer. Treat it as the main thing to pay attention to right now."]]},
+ppf:{name:"Three Cards — Past · Present · Future",pos:[["Past","This card describes what shaped your situation — past events, choices or people whose influence you can still feel."],["Present","This card describes what is happening around you right now, and the attitude that will help you most."],["Future","This card shows where things are heading if they stay on their current course. It is a direction, not a fixed fate — your choices can still change it."]]},
+soa:{name:"Three Cards — Situation · Obstacle · Advice",pos:[["Situation","This card describes what is really going on — which may be different from how it feels from the inside."],["Obstacle","This card names what is standing in your way — a force, a habit or a fear. Once you can name it, it is easier to deal with."],["Advice","This card is the advice — what the situation needs from you. If you act on one card, act on this one."]]},
+cross:{name:"Five Cards — Clarity Cross",pos:[["Situation","The center of the reading — what is really going on."],["Challenge","What is working against you — the source of the tension."],["Root","The deeper cause — what has been feeding this situation from underneath, often for a long time."],["Advice","The advice — what to do, or how to respond."],["Likely Outcome","Where things are likely to go if you follow the advice. A direction, not a guarantee."]]},
+celtic:{name:"Ten Cards — Celtic Cross",pos:[["Present","Where you stand right now."],["Challenge","What is working against you at the moment."],["Root","What lies underneath — the deeper cause of the whole situation."],["Recent Past","What is fading — an influence on its way out."],["Crown","The best result that is realistically possible here."],["Near Future","What is likely to happen next, in the coming weeks."],["You","Your own attitude — how you are handling this."],["Environment","The people and circumstances around you."],["Hopes & Fears","What you hope for and what you fear — often the same thing."],["Outcome","Where everything is heading if nothing changes."]]}};
+MODULES.tarot={
+  icon:"🔮",title:"Tarot",tag:"Five spreads to choose from — a single card to the full Celtic Cross",
+  desc:"Choose a spread, focus on your question, breathe, and draw from the Major Arcana.",
+  form:'<label>Spread<select id="f-spread"><option value="one">1 Card · Heart of the Matter</option><option value="ppf" selected>3 Cards · Past-Present-Future</option><option value="soa">3 Cards · Situation-Obstacle-Advice</option><option value="cross">5 Cards · Clarity Cross</option><option value="celtic">10 Cards · Celtic Cross</option></select></label>'+FORM_Q,
+  run(){
+    const q=$('f-q')?$('f-q').value.trim():'';
+    const sp=TSPREADS[($('f-spread')&&$('f-spread').value)||'ppf'];
+    const n=sp.pos.length;
+    const idx=[...Array(22).keys()];const drawn=[];
+    for(let i=0;i<n;i++){drawn.push(idx.splice(Math.floor(Math.random()*idx.length),1)[0]);}
+    let h=`<p class="tag" style="text-align:center;margin-bottom:12px">${sp.name}</p><div class="tarot-row">`;
+    const details=[];
+    drawn.forEach((ci,i)=>{
+      const rev=Math.random()<0.3;const c=TAROT[ci];
+      h+=`<div class="tcard"${n>5?' style="width:104px;padding:10px 6px"':''}><div class="sym" style="${rev?'transform:rotate(180deg)':''}">${c[1]}</div><div class="nm ${rev?'rev':''}">${c[0]}${rev?' (reversed)':''}</div><div class="pos">${i+1}. ${sp.pos[i][0]}</div></div>`;
+      details.push({p:sp.pos[i],c,rev,ci});
+    });
+    h+='</div>';
+    details.forEach(d=>{
+      h+=`<div class="rcard"><h4>${d.p[0]} — ${d.c[0]}${d.rev?' <span class="rev">(reversed)</span>':''}</h4><p class="tag">${TAROT_ESSENCE[d.ci]}</p><p style="margin-top:8px"><b>Keywords:</b> ${d.rev?d.c[3]:d.c[2]}.</p>${d.rev?`<p style="margin-top:8px">Reversed means the card's energy is blocked, turned inward, or needs a second look. Its upright meaning (${d.c[2]}) is still within reach, but you will need to work at it on purpose.</p>`:''}<p style="margin-top:8px">${d.p[1]}</p></div>`;
+    });
+    let advIdx=sp.pos.findIndex(p=>p[0]==='Advice');
+    if(advIdx<0)advIdx=sp.pos.findIndex(p=>p[0]==='You');
+    const act=advIdx>=0?details[advIdx]:details[Math.min(1,n-1)];
+    if(n>1){
+      h+=`<div class="rcard"><h4>🧵 The Story of the Spread</h4><p>Read the spread as one story: it starts with <b>${details[0].c[0]}</b> (${details[0].p[0]}) and ends with <b>${details[n-1].c[0]}</b> (${details[n-1].p[0]}). The cards in between are the chapters. Notice which card stood out most when it appeared — that one usually matters most to you.</p><p style="margin-top:8px">A simple way to use this reading: act on <b>${act.c[0]}</b> (${act.p[0]}) this week. ${act.rev?'Since it is reversed, start by clearing what is in the way before adding anything new.':'It is upright, so follow its keywords directly.'}</p></div>`;
+    }else{
+      h+=`<div class="rcard"><h4>🧵 Living With One Card</h4><p>Carry <b>${details[0].c[0]}</b> with you through the day. When something happens, ask yourself: how would this card see it? By evening, its message will usually be clear.</p></div>`;
+    }
+    if(q)h+=`<div class="rcard"><h4>On your question</h4><p class="tag">“${esc(q)}”</p><p>The cards rarely give a yes or no. They suggest <i>how</i> to approach things. Here, the advice is to face your situation in the spirit of <b>${act.c[0]}</b>${act.rev?' (once you clear what blocks it)':''}, and let the ${details[n-1].p[0].toLowerCase()} card show you where that leads.</p></div>`;
+    return h;
+  }};
+
+/* ===== ANGEL CARDS ===== */
+const ANGELS=[["Archangel Michael","🗡️","Courage","You are protected. Cut the cords of fear and take the brave step you have been postponing."],
+["Archangel Raphael","💚","Healing","Healing energy surrounds you now — body, heart and old wounds. Drink water, rest, and let yourself mend."],
+["Archangel Gabriel","📯","Message","A message or opportunity to communicate is coming. Speak your truth; your words carry light."],
+["Archangel Uriel","💡","Clarity","The answer you seek is already within you. A flash of insight arrives when you quiet the noise."],
+["Archangel Chamuel","💗","Love","Love is closer than you think. Open your heart — to others, and just as much to yourself."],
+["Archangel Jophiel","🌸","Beauty","Beautify your thoughts. Shift one negative story today and watch your outer world soften."],
+["Archangel Zadkiel","🕯️","Forgiveness","Forgiveness will free far more energy than resentment ever protected. Begin with yourself."],
+["Archangel Metatron","✨","Alignment","Your energies are being realigned. Declutter one small space and your path will feel lighter."],
+["Guardian Angel","👼","Presence","You are never alone. Your guardian walks beside you today — ask, and signs will follow."],
+["Angel of Abundance","🌾","Abundance","Prosperity flows toward gratitude. Count three blessings aloud and doors begin to open."],
+["Angel of New Beginnings","🌅","Fresh Start","A chapter is closing so a brighter one can open. Do not grieve the door — greet the doorway."],
+["Angel of Patience","🕰️","Divine Timing","It is not a no — it is a not yet. Trust the timing; what is yours cannot pass you by."],
+["Angel of Joy","🎈","Joy","Do one thing today purely because it delights you. Joy is a compass, not a reward."],
+["Angel of Peace","🕊️","Peace","Release the battle you cannot win by force. Peace is the strategy now."],
+["Angel of Strength","⛰️","Resilience","You have survived every hard day so far — a perfect record. This one bows to you too."],
+["Angel of Intuition","🌙","Inner Voice","That quiet nudge you keep dismissing? It is guidance. Trust the first whisper."],
+["Angel of Family","🏡","Home","Healing flows through your family lines. A kind word today mends more than you know."],
+["Angel of Dreams","💫","Dreams","Pay attention to your dreams this week — guidance arrives while you sleep. Keep a note nearby."],
+["Angel of Truth","🔍","Honesty","A truth wants to surface. Speak it gently — honesty delivered with love cannot wound."],
+["Angel of Gratitude","🙏","Gratitude","The fastest way to more is thankfulness for what is. Your grateful heart is magnetic."],
+["Angel of Creativity","🎨","Creation","You were born to make things. Give your idea one hour today — the muse rewards motion."],
+["Angel of Release","🍂","Letting Go","Whatever you are gripping is gripping you back. Open your hands; the universe refills them."],
+["Angel of Faith","🌠","Faith","You cannot see the whole staircase — take the step anyway. You are being carried."],
+["Angel of Light","🌟","Hope","However dark it has felt, light is returning. Your dawn is already on its way."]];
+const ANGEL_PRACTICE=[
+"Name the fear aloud once, then take one concrete brave action within 24 hours.",
+"Place a hand over your heart for three slow breaths and ask what needs healing first — then honor the first answer.",
+"Write the message you have been holding back, and send or speak it before sunset.",
+"Sit in silence for five minutes and write the first answer that surfaces, without editing it.",
+"Send a loving message to someone today — and say one kind sentence to yourself in the mirror.",
+"Catch one harsh thought today and restate it the way you would to a dear friend.",
+"Write the grievance on paper and tear it up — carrying it was the heaviest job you had.",
+"Clear one drawer, shelf or inbox today; outer order invites inner order.",
+"Ask your guardian one question tonight, and watch for the answer over the next three days.",
+"Write three things you are grateful for and one channel through which more could arrive.",
+"Name the ending honestly, then write the first sentence of the new chapter.",
+"Beside one worry, write the words 'not yet' — and set a date to revisit instead of ruminating.",
+"Schedule thirty unproductive, delightful minutes today and defend them like an appointment.",
+"Choose one battle to formally resign from today — say it out loud.",
+"List three hard things you already survived; read the list whenever today feels heavy.",
+"Before touching any device tomorrow morning, sit and listen for one full minute.",
+"Reach out to one family member with a memory or a thank-you today.",
+"Keep paper by your bed tonight and record whatever you recall on waking.",
+"Rehearse the difficult sentence once with kindness, then say it within three days.",
+"Tell one person, specifically, what they add to your life.",
+"Give your idea one uninterrupted hour this week — begin badly on purpose.",
+"Choose one thing — an object, a habit or a grudge — and physically let it go today.",
+"Take the smallest possible version of the step you have been avoiding.",
+"Light a candle tonight and name what you want the coming dawn to bring."];
+const ASPREADS={
+three:{name:"Three Angels — Release · Embrace · Receive",pos:[["To Release","This angel points to something that is ready to leave your life. Let it go with thanks — holding on only makes it heavier."],["To Embrace","This angel points to something that wants to grow in your life right now. Say yes to it and give it time."],["To Receive","This angel points to something already on its way to you. Stay open so you don't miss it when it arrives."]]},
+heal:{name:"Healing Spread — Heart · Mind · Path",pos:[["Your Heart","The feelings you are carrying, and what your heart needs from you right now."],["Your Mind","The thought pattern to watch this week — question it, or gently quiet it."],["Your Path","Guidance for your next steps in the coming days."]]}};
+function angelCardHTML(ai,heading,context){
+  const a=ANGELS[ai];
+  return `<div class="tarot-row"><div class="tcard" style="width:190px"><div class="sym">${a[1]}</div><div class="nm">${a[0]}</div><div class="pos">${a[2]}</div></div></div>
+    <div class="rcard"><h4>${heading} — ${a[2]}</h4><p>${a[3]}</p><p style="margin-top:8px">${context}</p></div>
+    <div class="rcard"><h4>🕊️ A Practice for Today</h4><p>${ANGEL_PRACTICE[ai]}</p><p style="margin-top:8px" class="tag">A small action completes the message — try it today.</p></div>
+    <div class="rcard"><h4>✨ Affirmation</h4><p style="font-style:italic">"I welcome ${a[2].toLowerCase()} into my life. I am open, I am guided, and I am never walking alone."</p><p style="margin-top:8px" class="tag">Carry this word with you today: <b style="color:var(--gold2)">${a[2]}</b>. Repeat the affirmation once in the morning and once before sleep.</p></div>`;
+}
+MODULES.angel={
+  icon:"👼",title:"Angel Cards",tag:"Your daily angel card, a single message, or a full angel spread",
+  desc:"Choose how the angels speak to you today — then close your eyes and draw.",
+  form:'<label>Reading<select id="f-aspread"><option value="daily">🌅 Your Daily Angel Card</option><option value="single" selected>Single Message</option><option value="three">3 Angels · Release-Embrace-Receive</option><option value="heal">3 Angels · Heart-Mind-Path</option></select></label>'
+      +'<label>Your name (personalizes the daily card)<input type="text" id="f-aname" placeholder="Optional"></label>'
+      +FORM_Q,
+  run(){
+    const q=$('f-q')?$('f-q').value.trim():'';
+    const mode=($('f-aspread')&&$('f-aspread').value)||'single';
+    const name=($('f-aname')?$('f-aname').value:'').trim();
+    const qCard=(a)=>q?`<div class="rcard"><h4>On your question</h4><p class="tag">“${esc(q)}”</p><p>Angel cards answer indirectly. Instead of saying what will happen, ${a[0]} tells you what to <i>bring</i> to it — ${a[2].toLowerCase()}. Approach your situation with that, and notice what changes.</p></div>`:'';
+    if(mode==='daily'){
+      const today=new Date();
+      const ds=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+      let x=7;for(const ch of (ds+'|'+name.toLowerCase())){x=((x*31+ch.charCodeAt(0))>>>0);}
+      const ai=x%ANGELS.length;const a=ANGELS[ai];
+      const dateNice=today.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+      let h=`<p class="tag" style="text-align:center;margin-bottom:12px">🌅 Your Daily Angel Card · ${dateNice}${name?` · for ${esc(name)}`:''}</p>`;
+      h+=angelCardHTML(ai,a[0],`This is your card for the whole of today — drawing again will not change it. ${name?`It is chosen from your name and today's date, so your daily card is yours alone.`:`Add your name above to make it personal — the same date gives different people different cards.`} Come back after midnight for a new one.`);
+      return h+qCard(a);
+    }
+    if(mode==='single'){
+      const ai=Math.floor(Math.random()*ANGELS.length);const a=ANGELS[ai];
+      return angelCardHTML(ai,a[0],`An angel card does not predict the future. It points to what needs your attention right now. Today's card suggests that <b>${a[2].toLowerCase()}</b> is the theme running under your current situation — in the decisions you are weighing, or the conversations you keep putting off.`)+qCard(a);
+    }
+    /* multi-card spreads */
+    const spr=ASPREADS[mode];
+    const pool=[...Array(ANGELS.length).keys()];const drawn=[];
+    for(let i=0;i<spr.pos.length;i++){drawn.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);}
+    let h=`<p class="tag" style="text-align:center;margin-bottom:12px">${spr.name}</p><div class="tarot-row">`;
+    drawn.forEach((ai,i)=>{const a=ANGELS[ai];h+=`<div class="tcard" style="width:150px"><div class="sym">${a[1]}</div><div class="nm">${a[0]}</div><div class="pos">${spr.pos[i][0]}</div></div>`;});
+    h+='</div>';
+    drawn.forEach((ai,i)=>{const a=ANGELS[ai];
+      h+=`<div class="rcard"><h4>${spr.pos[i][0]} — ${a[0]} (${a[2]})</h4><p>${a[3]}</p><p style="margin-top:8px">${spr.pos[i][1]}</p><p style="margin-top:8px" class="tag">🕊️ Practice: ${ANGEL_PRACTICE[ai]}</p></div>`;});
+    const kws=drawn.map(ai=>ANGELS[ai][2].toLowerCase());
+    h+=`<div class="rcard"><h4>✨ Affirmation for This Spread</h4><p style="font-style:italic">"Today I make room for ${kws.slice(0,-1).join(', ')} and ${kws[kws.length-1]}. I trust the order in which they arrive."</p><p style="margin-top:8px" class="tag">${mode==='three'?'Read the three cards together: letting go makes room, what grows fills that room, and what arrives completes it.':'Read the three cards together: listen to your heart, calm your mind, and then take the next step.'}</p></div>`;
+    return h+qCard(ANGELS[drawn[drawn.length-1]]);
+  }};
+
+/* ===== NUMEROLOGY (name) ===== */
+const PYTH={a:1,j:1,s:1,b:2,k:2,t:2,c:3,l:3,u:3,d:4,m:4,v:4,e:5,n:5,w:5,f:6,o:6,x:6,g:7,p:7,y:7,h:8,q:8,z:8,i:9,r:9};
+MODULES.numerology={
+  icon:"🔢",title:"Numerology",tag:"Expression & Soul Urge from your name",
+  desc:"Your name carries a vibration. Enter your full name and date of birth.",
+  form:FORM_NAME+FORM_DOB,
+  run(){
+    const name=($('f-name').value||'').toLowerCase().replace(/[^a-z]/g,'');
+    const dob=$('f-dob').value;
+    if(!name)return '<div class="rcard"><p>Please enter your name ✨</p></div>';
+    const all=reduce([...name].reduce((a,c)=>a+(PYTH[c]||0),0));
+    const vow=reduce([...name].filter(c=>'aeiou'.includes(c)).reduce((a,c)=>a+(PYTH[c]||0),0));
+    const con=reduce([...name].filter(c=>!'aeiou'.includes(c)).reduce((a,c)=>a+(PYTH[c]||0),0));
+    let h=`<div class="rcard"><h4>Expression Number ${all}</h4><p class="tag">From all the letters of your name — the talents you were born with.</p><p style="margin-top:8px">${NUM_MEANINGS[all]}</p>${numDetailHTML(all)}</div>
+    <div class="rcard"><h4>Soul Urge Number ${vow}</h4><p class="tag">From the vowels in your name — what your heart wants deep down.</p><p style="margin-top:8px">${NUM_MEANINGS[vow]}</p><p style="margin-top:8px">When your daily life feeds this number, you feel content. When it is ignored, even success feels empty. Use it as your inner compass — choices that honor it rarely turn out to be mistakes.</p></div>
+    <div class="rcard"><h4>Personality Number ${con}</h4><p class="tag">From the consonants in your name — the first impression you give people.</p><p style="margin-top:8px">${NUM_MEANINGS[con]}</p><p style="margin-top:8px">${vow!==con?`Your Soul Urge (${vow}) and Personality (${con}) are different. That means people who only know you casually may be surprised by who you really are underneath — the deeper side shows only to those you trust.`:`Your Soul Urge and Personality match — what people see is truly who you are. That kind of openness is rare.`}</p></div>
+    <div class="rcard"><h4>🎼 How Your Numbers Work Together</h4><p>Think of the three numbers like this: the <b>Expression ${all}</b> is your toolkit, the <b>Soul Urge ${vow}</b> is what you want deep down, and the <b>Personality ${con}</b> is how you come across. ${all===vow||all===con||vow===con?'Repeated numbers make your character focused and consistent — people know exactly who you are.':'All three are different, which gives you range. It may take years to feel like one whole self — that is normal, and it is the journey.'}</p></div>`;
+    if(dob){const lp=lifePathOf(dob);h+=`<div class="rcard"><h4>Bonus · Life Path ${lp}</h4><p>${NUM_MEANINGS[lp]}</p><p style="margin-top:8px">${lp===all?'Your Life Path matches your Expression number — your talents and your life direction point the same way.':'Your Life Path differs from your Expression number, so life keeps stretching your natural talents toward a new lesson. That friction is normal — it is how you grow.'}</p></div>`;}
+    return h;
+  }};
+
+/* ===== LIFE PATH ===== */
+function lifePathOf(dob){const[y,m,d]=dob.split('-').map(Number);return reduce(reduce(y)+reduce(m)+reduce(d));}
+MODULES.lifepath={
+  icon:"🛤️",title:"Life Path Number",tag:"The core lesson of this lifetime",
+  desc:"Calculated from your date of birth — the road your soul chose to walk.",
+  form:FORM_DOB,
+  run(){
+    const dob=$('f-dob').value;if(!dob)return '<div class="rcard"><p>Please choose your date of birth ✨</p></div>';
+    const[y,m,d]=dob.split('-').map(Number);
+    const lp=lifePathOf(dob);const bd=reduce(d);const py=personalYear(m,d);
+    return `<div class="bignum">${lp}</div>
+    <div class="rcard"><h4>Life Path ${lp}</h4><p>${NUM_MEANINGS[lp]}</p><p style="margin-top:8px">The Life Path is the big theme of your life. Its lessons come back at different ages — in school, in your career, in your relationships — each time asking for a better answer than before.</p>${numDetailHTML(lp)}</div>
+    <div class="rcard"><h4>Birthday Number ${bd}</h4><p>A special talent you carry: ${NUM_MEANINGS[bd].split('—')[1].split('.')[0].trim()}.</p><p style="margin-top:8px">The Life Path is learned over a lifetime, but the Birthday Number is a talent you were born with — something people have probably noticed about you since childhood. It is the tool you reach for when things get hard.</p></div>
+    <div class="rcard"><h4>Personal Year ${py}</h4><p>${PY_MEANINGS[py]}</p><p style="margin-top:8px">Personal Years run in nine-year cycles. Knowing where you are in the cycle is like knowing the season before you plant. ${py<=3?'You are early in the cycle — a good time to start things, because effort now pays off for years.':py<=6?'You are mid-cycle — a time to commit to and deepen what you started.':'You are late in the cycle — finish things, celebrate, and let go before the next cycle begins.'}</p></div>
+    <div class="rcard"><h4>🧭 Living Your Path</h4><p>A simple rule: when a decision is confusing, ask which option lets you be more of a <b>${lp}</b> — more ${NUM_MEANINGS[lp].split('—')[1].split('.')[0].trim().toLowerCase()}. You don't have to get it perfect. Small choices in the same direction add up to a life that feels like your own.</p></div>`;
+  }};
+function personalYear(m,d){const now=new Date();let y=now.getFullYear();const had=(now.getMonth()+1>m)||(now.getMonth()+1===m&&now.getDate()>=d);return reduce(reduce(m)+reduce(d)+reduce(y),false);}
+const PY_MEANINGS={1:"A year of new beginnings — plant seeds boldly.",2:"A year of patience and partnership — nurture what you planted.",3:"A year of expression and social joy — create and connect.",4:"A year of foundations — steady work pays lasting dividends.",5:"A year of change and freedom — say yes to the unexpected.",6:"A year of love, home and responsibility — relationships deepen.",7:"A year of reflection — study, rest and listen inward.",8:"A year of harvest and power — money and recognition move.",9:"A year of completion — release the old to welcome the new cycle."};
+
+/* ===== DESTINY CODE ===== */
+MODULES.destiny={
+  icon:"🔺",title:"Destiny Code",tag:"The number pyramid hidden in your birth date",
+  desc:"Your birth date forms a sacred triangle. The root reveals your character code.",
+  form:FORM_DOB,
+  run(){
+    const dob=$('f-dob').value;if(!dob)return '<div class="rcard"><p>Please choose your date of birth ✨</p></div>';
+    const[y,m,d]=dob.split('-').map(Number);
+    const dd=String(d).padStart(2,'0'),mm=String(m).padStart(2,'0'),yyyy=String(y);
+    const r=n=>reduce(n,false);
+    const I=r(+dd[0]+ +dd[1]),J=r(+mm[0]+ +mm[1]),K=r(+yyyy[0]+ +yyyy[1]),L=r(+yyyy[2]+ +yyyy[3]);
+    const M=r(I+J),N=r(K+L),root=r(M+N);
+    return `<div class="pyr">${dd[0]} ${dd[1]} ${mm[0]} ${mm[1]} ${yyyy[0]} ${yyyy[1]} ${yyyy[2]} ${yyyy[3]}<br>${I} ${J} — ${K} ${L}<br>${M} — ${N}<br><span class="bignum">${root}</span></div>
+    <div class="rcard"><h4>How the Pyramid Is Built</h4><p>The eight digits of your birth date form the base of the triangle. The day digits reduce to <b>${I}</b> and the month digits to <b>${J}</b> — these describe you. The year digits reduce to <b>${K}</b> and <b>${L}</b> — the generation you were born into. Each row adds up and reduces the row below it, until one number is left at the top: your root.</p></div>
+    <div class="rcard"><h4>Your Root Number: ${root}</h4><p>${NUM_MEANINGS[root]}</p>${numDetailHTML(root)}</div>
+    <div class="rcard"><h4>Inner Pair ${M} · ${N}</h4><p>Your character blends the ${M} (${NUM_MEANINGS[M].split('—')[0].trim()}) with the ${N} (${NUM_MEANINGS[N].split('—')[0].trim()}). The ${M} shows how you act in daily life; the ${N} is the deeper current underneath. ${M===N?'They are the same number, which makes this theme the clear center of your character.':'When the two work together, your root '+root+' is at full strength. When you feel torn, it is usually these two pulling in different directions.'}</p></div>
+    <div class="rcard"><h4>🔎 Using Your Code Day to Day</h4><p>Think of your root as a default setting, not a cage. Under stress you slip into the ${root}'s weak side; at your best you show its gift. Watch for both this week — your best moments and your most stuck moments will usually both look like a ${root}.</p></div>`;
+  }};
+
+/* ===== BAZI ===== */
+MODULES.bazi={
+  icon:"🐉",title:"BaZi · Four Pillars",tag:"八字 — Chinese Four Pillars of Destiny",
+  desc:"Your birth moment maps to four pillars of heavenly stems and earthly branches.",
+  form:FORM_DOB+FORM_HOUR,
+  run(){
+    const dob=$('f-dob').value;if(!dob)return '<div class="rcard"><p>Please choose your date of birth ✨</p></div>';
+    const[y,m,d]=dob.split('-').map(Number);const hr=$('f-hour').value;
+    const p=fourPillars(y,m,d,hr===''?null:+hr);
+    const dm=p.day[0];const dmEl=STEMS[dm][3];const dmE=dmEl.split(' ')[1];
+    let h=pillarHTML(p,'cn');
+    h+=PILLAR_MEANINGS;
+    h+=`<div class="rcard"><h4>Day Master: ${STEMS[dm][0]} ${STEMS[dm][1]} (${dmEl})</h4><p>The Day Master is the heart of a BaZi chart — everything else is read around it. As <b>${dmEl}</b>, your nature is ${ELEM_DESC[dmE]}. ${dmEl.startsWith('Yang')?'Yang energy is direct and outward: you tend to act first and think after, and people see you as decisive.':'Yin energy is quiet and inward: you watch before you act, and your influence works slowly but surely.'}</p><p style="margin-top:8px">${seasonStrength(dmE,p.month[1])}</p></div>`;
+    h+=`<div class="rcard"><h4>Year Animal: ${BRANCHES[p.year[1]][3]}</h4><p>You were born in a ${BRANCHES[p.year[1]][3]} year, carried by the ${BRANCHES[p.year[1]][4]} element. This shapes first impressions, your family roots, and the luck you inherited. In groups, the ${BRANCHES[p.year[1]][3]}'s energy is often what strangers notice about you first.</p></div>`;
+    h+=`<div class="rcard"><h4>Spouse Palace: ${BRANCHES[p.day[1]][0]} ${BRANCHES[p.day[1]][1]} (${BRANCHES[p.day[1]][3]})</h4><p>The character under your Day Master is called the spouse palace — it describes the kind of partner you attract. With the <b>${BRANCHES[p.day[1]][3]}</b> here (${BRANCHES[p.day[1]][4].toLowerCase()} energy), you are drawn to partners who bring ${ELEM_DESC[BRANCHES[p.day[1]][4]].split('—')[0].trim()} into your life. Your closest relationships tend to take on this flavor over time.</p></div>`;
+    const yy2=yinYangCount(p);
+    h+=`<div class="rcard"><h4>Yin–Yang Balance: ${yy2.yang} yang · ${yy2.yin} yin</h4><p>${yy2.yang>yy2.yin+1?'Your chart leans yang: active, outward and quick to start. You recharge by doing, not resting. Your lesson is stillness — build quiet time into your week on purpose.':yy2.yin>yy2.yang+1?'Your chart leans yin: thoughtful, deep and strategic. You often understand a situation fully before you say a word. Your lesson is expression — what you know helps no one until you share it.':'Your chart balances yin and yang: you can lead or support, speak or listen. That flexibility is rare. Your only challenge is choosing which mode each moment needs.'}</p></div>`;
+    h+=elementReading(countElements(p));
+    if(!hr)h+=`<div class="rcard"><p class="tag">Add your birth hour for the fourth pillar — it reveals your inner world, your children and legacy, and your later years.</p></div>`;
+    h+=`<div class="rcard"><p class="tag">Note: month boundaries use standard solar-term approximations; a professional chart may differ by a day near term transitions.</p></div>`;
+    return h;
+  }};
+
+/* ===== SAJU ===== */
+MODULES.saju={
+  icon:"🏮",title:"Saju · Korean Four Pillars",tag:"사주팔자 — the Four Pillars of Korean destiny reading",
+  desc:"Saju reads the same cosmic clock through Korean tradition — your year, month, day and hour pillars.",
+  form:FORM_DOB+FORM_HOUR,
+  run(){
+    const dob=$('f-dob').value;if(!dob)return '<div class="rcard"><p>Please choose your date of birth ✨</p></div>';
+    const[y,m,d]=dob.split('-').map(Number);const hr=$('f-hour').value;
+    const p=fourPillars(y,m,d,hr===''?null:+hr);
+    const dm=p.day[0];const el=STEMS[dm][3].split(' ')[1];
+    let h=pillarHTML(p,'kr');
+    h+=`<div class="rcard"><h4>Ilju (일주) — Day Pillar: ${STEMS[dm][2]} ${BRANCHES[p.day[1]][2]}</h4><p>In Saju, the day pillar is your core self — the rest of the chart is read around it. Your ${STEMS[dm][3]} nature gives you ${ELEM_DESC[el]}. The ${BRANCHES[p.day[1]][3]} branch underneath colors your instincts with ${BRANCHES[p.day[1]][4].toLowerCase()} energy.</p><p style="margin-top:8px">${seasonStrength(el,p.month[1])}</p></div>`;
+    h+=`<div class="rcard"><h4>The Four Pillars Story</h4><p>Koreans read the pillars as the seasons of a life. The <b>year</b> pillar (년주) is your roots: family and early childhood. The <b>month</b> pillar (월주) covers your parents, education and the career field that suits you. The <b>day</b> pillar (일주) is you, and its lower character is your spouse seat — the partner energy you attract. The <b>hour</b> pillar (시주) covers your children, your ambitions and your later years. ${hr?'All four pillars are shown above — a complete map.':'Add your birth hour to unlock the fourth pillar.'}</p></div>`;
+    h+=`<div class="rcard"><h4>Spouse Seat: ${BRANCHES[p.day[1]][2]} (${BRANCHES[p.day[1]][3]})</h4><p>The character under your day stem shows the kind of partner who naturally comes into your life. With the ${BRANCHES[p.day[1]][3]} here, you tend to attract people who bring ${ELEM_DESC[BRANCHES[p.day[1]][4]].split('—')[0].trim()}. In Korean tradition this seat also hints at what the marriage will ask of you, and what it will give.</p></div>`;
+    h+=`<div class="rcard"><h4>Ohaeng (오행) — Your Five Elements</h4><p>Saju treats the five elements like your life's weather. A balanced chart means mild seasons; an unbalanced one means a distinct climate — and knowing your climate helps you dress for it. The reading below shows where you are strong and where you may need support.</p></div>`;
+    h+=elementReading(countElements(p));
+    return h;
+  }};
+
+/* ===== ZI WEI DOU SHU ===== */
+const ZIWEI=[["紫微","Zi Wei · The Emperor Star","Natural authority and dignity. You are destined to lead, organize and be respected. People instinctively look to you; carry the crown with kindness."],
+["天機","Tian Ji · The Strategist Star","A brilliant, restless mind. You excel at planning, analysis and seeing the mechanism behind everything. Your fortune grows when thought turns to action."],
+["太陽","Tai Yang · The Sun Star","Radiant, generous, born to give light. You shine in public roles and lift everyone around you. Guard your energy — even the sun must set to rise."],
+["武曲","Wu Qu · The Finance Star","Determined and unyielding, with a natural gift for wealth and resources. You prosper through discipline. Soften the steel with warmth."],
+["天同","Tian Tong · The Blessing Star","A gentle, optimistic spirit protected by good fortune. Blessings find you in gentle ways. Your lesson is to strive even when comfort tempts you to drift."],
+["廉貞","Lian Zhen · The Crimson Star","Intense, magnetic and complex. You feel deeply and transform dramatically. Life gives you both fire and the wisdom that only fire teaches."],
+["天府","Tian Fu · The Treasury Star","Stable, capable and abundant — a natural custodian of wealth and people. You build safe harbors. Beware of holding too tightly to comfort."],
+["太陰","Tai Yin · The Moon Star","Intuitive, artistic and quietly powerful. You work best behind the scenes, and your kindness accumulates unseen merit that returns as fortune."],
+["貪狼","Tan Lang · The Desire Star","Charismatic, multi-talented and hungry for experience. You are the life of every room. Channel the appetite into mastery and you become unstoppable."],
+["巨門","Ju Men · The Orator Star","Your power lives in your voice — persuasion, debate, teaching. Words open your doors; choose them with care, for they cut both ways."],
+["天相","Tian Xiang · The Minister Star","Loyal, fair and service-hearted. You rise by helping others rise. Your fortune multiplies through partnerships and trusted alliances."],
+["天梁","Tian Liang · The Guardian Star","An old soul with a protective spirit. Crises bend around you, and others heal in your presence. You are the elder of every group, whatever your age."],
+["七殺","Qi Sha · The General Star","Bold, decisive, born for challenge. You thrive where others fear to go. Your life favors courage — hesitate and it stalls, commit and it soars."],
+["破軍","Po Jun · The Pioneer Star","The breaker of old patterns. You are destined to demolish and rebuild — careers, identities, worlds. Embrace reinvention; it is your superpower."]];
+const ZIWEI_EXTRA=[
+["Leadership comes naturally to you — management, public office or any role where the final decision is yours.","You need a partner who admires you as an equal; mutual respect is your real romance."],
+["Strategy, technology, research and consulting suit you — your mind is the product.","You love through conversation; boredom is your only real rival in a relationship."],
+["Public-facing roles call you — leadership, media, education. You are made to be seen and to warm others.","You give generously in love; learn to let your partner give back before you burn out."],
+["Finance, engineering and disciplined fields reward you — wealth accumulates under your patience.","You show love through provision and reliability; soft words may need rehearsal, and that is perfectly fine."],
+["Harmony-first fields prosper you — people, hospitality, the arts. Your fortune often blooms later and gently.","Sweet and agreeable in love — just don't drift; happiness is something you must actively choose."],
+["Politics, law and competitive arenas turn your intensity into achievement.","Passionate and complicated — your relationships transform you, and that is their purpose."],
+["Management, real estate and stewardship suit you — you are a natural custodian of resources and people.","Stable and loyal, you offer shelter; remember to offer surprise as well."],
+["Planning, writing, design and quiet trades build your wealth steadily and privately.","Tender and moonlit in love — you feel deeply but must say it aloud, not just feel it."],
+["Entertainment, marketing and social ventures convert your charm into opportunity.","Magnetic and playful; depth in love is a decision only you can make — and it rewards you when you do."],
+["Law, teaching, broadcasting and negotiation pay your way — your voice earns your keep.","Talk is your intimacy; beware winning the argument and losing the evening."],
+["Deputy, adviser and chief-of-staff roles fit you — 'indispensable' is your brand.","Considerate and fair, you seek a partner you are proud to stand beside."],
+["Medicine, counsel, insurance and public welfare — the shield professions — are your element.","You tend to parent your partners a little; choose someone who savors care without exploiting it."],
+["Entrepreneurship, front-line command and high-stakes work are your element — risk sharpens you.","All-in and intense; you need a fellow soldier, not an audience."],
+["Turnaround roles, rebuilding ventures and frontiers suit you — you are at your best where others see rubble.","Your relationships reinvent you; stability arrives after honesty about your need for change."]];
+MODULES.ziwei={
+  icon:"⭐",title:"Zi Wei Dou Shu",tag:"紫微斗数 — Purple Star Astrology (simplified)",
+  desc:"The Emperor of Chinese astrology. Find the main star lighting your Life Palace.",
+  form:FORM_DOB+FORM_HOUR,
+  run(){
+    const dob=$('f-dob').value;if(!dob)return '<div class="rcard"><p>Please choose your date of birth ✨</p></div>';
+    const[y,m,d]=dob.split('-').map(Number);const hr=$('f-hour').value===''?0:+$('f-hour').value;
+    const p=fourPillars(y,m,d,hr);
+    const monthNo=((p.month[1]-2)+12)%12; // 0 = first month
+    const hb=p.hour?p.hour[1]:0;
+    const ming=((2+monthNo-hb)%12+12)%12;         // Life Palace branch
+    const starIdx=(jdn(y,m,d)+ming)%14;
+    const s=ZIWEI[starIdx];const ex=ZIWEI_EXTRA[starIdx];
+    const shen=((2+monthNo+hb)%12+12)%12;         // Body Palace
+    const opp=(ming+6)%12;                        // Migration Palace (opposite)
+    return `<div class="bignum" style="font-size:2.2rem">${s[0]}</div>
+    <div class="rcard"><h4>Life Palace (命宮) in ${BRANCHES[ming][0]} ${BRANCHES[ming][1]} — ${BRANCHES[ming][3]}</h4><p>Zi Wei Dou Shu divides a chart into twelve palaces. The Life Palace is the most important one — it sets your character and the baseline of your luck. Yours is in the ${BRANCHES[ming][3]} branch, which colors your chart with ${BRANCHES[ming][4].toLowerCase()} energy: ${ELEM_DESC[BRANCHES[ming][4]]}.</p></div>
+    <div class="rcard"><h4>Main Star: ${s[1]}</h4><p>${s[2]}</p><p style="margin-top:8px">💼 ${ex[0]}</p><p style="margin-top:8px">💗 ${ex[1]}</p></div>
+    <div class="rcard"><h4>Body Palace (身宮) in ${BRANCHES[shen][0]} — ${BRANCHES[shen][3]}</h4><p>The Life Palace shows the destiny you were given; the Body Palace shows how you actually live day to day — your habits and instincts, especially after mid-life. Yours carries the ${BRANCHES[shen][3]}'s ${BRANCHES[shen][4].toLowerCase()} nature. ${shen===ming?'Your Body and Life Palaces are the same — a focused chart. Who you are and how you live match, which gives you unusual consistency.':'Your Body and Life Palaces are different, so there can be a gap between who you are and how you act. Bringing the two together is one of this chart\'s main projects.'}</p></div>
+    <div class="rcard"><h4>Migration Palace (遷移宮) in ${BRANCHES[opp][0]} — ${BRANCHES[opp][3]}</h4><p>Opposite the Life Palace sits the Migration Palace — how you do away from home: travel, moving, new places and new people. With ${BRANCHES[opp][3]} energy here, new environments tend to bring out your ${BRANCHES[opp][4].toLowerCase()} qualities: ${ELEM_DESC[BRANCHES[opp][4]].split('—')[0].trim()}.</p></div>
+    <div class="rcard"><p class="tag">Note: this is a simplified reading using solar-calendar approximation. A full Zi Wei chart uses the lunar calendar, the five-element bureau and all twelve palaces with dozens of stars.</p></div>`;
+  }};
+
+/* ===== I CHING ===== */
+const KINGWEN=[2,24,7,19,15,36,46,11,16,51,40,54,62,55,32,34,8,3,29,60,39,63,48,5,45,17,47,58,31,49,28,43,23,27,4,41,52,22,18,26,35,21,64,38,56,30,50,14,20,42,59,61,53,37,57,9,12,25,6,10,33,13,44,1];
+const HEXAGRAMS={1:["Qián","The Creative","Pure creative energy. Act with strength, vision and integrity — great success follows perseverance."],2:["Kūn","The Receptive","Be open and yielding. Support, devotion and receptivity bring quiet, enduring success."],3:["Zhūn","Difficulty at the Beginning","Growing pains. Early chaos is natural — persevere and gather helpers."],4:["Méng","Youthful Folly","Inexperience is not failure. Seek a mentor, stay humble and teachable."],5:["Xū","Waiting","Patience. Nourish yourself while the timing ripens — the rain will come."],6:["Sòng","Conflict","Avoid escalation. Meet halfway and seek wise counsel rather than victory."],7:["Shī","The Army","Discipline and clear organization win the day. Lead with just cause."],8:["Bǐ","Holding Together","Unite with others. Alliances and belonging bring good fortune now."],9:["Xiǎo Chù","Small Taming","Small steps. Gentle restraint and detail-work quietly accumulate power."],10:["Lǚ","Treading","Walk carefully among the powerful. Courtesy and tact protect you."],11:["Tài","Peace","Heaven and earth in harmony — prosperity flows. Share the abundance."],12:["Pǐ","Standstill","Stagnation. Withdraw, conserve, and wait out the obstruction."],13:["Tóng Rén","Fellowship","Community and shared purpose succeed. Open alliances, open hearts."],14:["Dà Yǒu","Great Possession","Abundance is yours. Carry blessings with humility and generosity."],15:["Qiān","Modesty","Humility attracts fortune. The mountain hides beneath the earth."],16:["Yù","Enthusiasm","Inspire others. Joyful momentum builds — move with the music."],17:["Suí","Following","Adapt and follow what is right. Flexibility now is strength."],18:["Gǔ","Work on the Decayed","Repair what was neglected. Renewal is fully possible — begin."],19:["Lín","Approach","Good fortune approaches like spring. Act while the season is warm."],20:["Guān","Contemplation","Observe deeply before acting. Your view from the tower matters."],21:["Shì Kè","Biting Through","Confront the obstacle decisively. Clarity and justice prevail."],22:["Bì","Grace","Beauty and refinement. Polish the details; form serves essence."],23:["Bō","Splitting Apart","Let go of what crumbles. Do not force — protect what is essential."],24:["Fù","Return","The turning point. Light returns after darkness — a fresh cycle begins."],25:["Wú Wàng","Innocence","Act naturally and honestly. Sincerity succeeds where scheming fails."],26:["Dà Chù","Great Taming","Store your power. Great strength held in reserve becomes greater."],27:["Yí","Nourishment","Watch what you feed — body, mind and conversation alike."],28:["Dà Guò","Great Excess","Extraordinary times call for careful, extraordinary measures."],29:["Kǎn","The Abyss","Danger repeats — flow through it like water. Sincerity carries you."],30:["Lí","Clinging Fire","Clarity and illumination. Attach yourself to what is bright and true."],31:["Xián","Influence","Mutual attraction. Stay open — genuine connection is forming."],32:["Héng","Duration","Consistency. Endure in what works; do not abandon the long game."],33:["Dùn","Retreat","Strategic withdrawal preserves strength. Retreat is not defeat."],34:["Dà Zhuàng","Great Power","Strength surges. Use it righteously, never rashly."],35:["Jìn","Progress","Rapid advance — rise like the morning sun, visibly and warmly."],36:["Míng Yí","Darkening of the Light","Protect your light in adverse times. Shine inwardly for now."],37:["Jiā Rén","The Family","Harmony at home is the root of all outer order. Tend the hearth."],38:["Kuí","Opposition","Differences abound. Seek unity in small things first."],39:["Jiǎn","Obstruction","Pause and reflect. Go around the mountain — and accept help."],40:["Xiè","Deliverance","Release and relief. Forgive quickly and move forward lightly."],41:["Sǔn","Decrease","Simplify. Voluntary less becomes meaningful more. Sincerity counts."],42:["Yì","Increase","A time of gain. Use the windfall generously and act on plans."],43:["Guài","Breakthrough","Resolve. Declare the truth openly and see it through firmly."],44:["Gòu","Coming to Meet","An unexpected encounter. Stay alert — not all that arrives should stay."],45:["Cuì","Gathering","People gather around a center. Celebrate and consolidate."],46:["Shēng","Pushing Upward","Steady growth. Effort ascends step by step — keep climbing."],47:["Kùn","Oppression","Exhaustion. When words fail, keep faith — this hexagram forges greatness."],48:["Jǐng","The Well","Return to the source. Your inner depths can nourish many."],49:["Gé","Revolution","Transformation. Shed the old skin — but only when the moment is ripe."],50:["Dǐng","The Cauldron","Refinement of destiny. Nourish culture, spirit and worthy people."],51:["Zhèn","Thunder","Shock awakens. Keep composure amid upheaval — then laughter returns."],52:["Gèn","Stillness","Stop when it is time to stop. Stillness of the back, peace of the mind."],53:["Jiàn","Gradual Progress","Slow, orderly development — like a tree on a hill, unhurried and sure."],54:["Guī Mèi","The Marrying Maiden","Know your position in evolving relationships. Patience over impulse."],55:["Fēng","Abundance","Peak brightness. Enjoy the fullness while it lasts; be like the midday sun."],56:["Lǚ","The Wanderer","Travel light. In unfamiliar places, courtesy and caution are your shelter."],57:["Xùn","The Gentle Wind","Subtle, persistent influence penetrates everywhere. Repeat softly."],58:["Duì","Joy","Joy shared is doubled. Encourage one another — pleasant words travel far."],59:["Huàn","Dispersion","Dissolve rigidity and division. Let barriers wash away like ice in spring."],60:["Jié","Limitation","Healthy limits create freedom. Set measures — but not bitter ones."],61:["Zhōng Fú","Inner Truth","Sincerity so deep it moves all beings. Speak from the center."],62:["Xiǎo Guò","Small Excess","Small matters succeed; great ambitions should wait. Stay low and careful."],63:["Jì Jì","After Completion","Success achieved. Guard the win — order can slide back to chaos."],64:["Wèi Jì","Before Completion","Almost there. Like a fox crossing ice — careful with the final steps."]};
+MODULES.iching={
+  icon:"☯️",title:"I Ching",tag:"易經 — the Book of Changes, cast with three coins",
+  desc:"Hold your question in mind. Six virtual coin tosses build your hexagram.",
+  form:FORM_Q,
+  run(){
+    const q=$('f-q')?$('f-q').value.trim():'';
+    // three coins per line: heads=3, tails=2 → 6,7,8,9
+    const coin=()=>Math.random()<.5?3:2;
+    const vals=Array.from({length:6},()=>coin()+coin()+coin());
+    const prim=vals.map(v=>v%2);            // 7,9 = yang(1); 6,8 = yin(0)
+    const trans=vals.map(v=>v===6?1:v===9?0:v%2);
+    const hasChange=vals.some(v=>v===6||v===9);
+    const num=v=>{const lo=v[0]+v[1]*2+v[2]*4,hi=v[3]+v[4]*2+v[5]*4;return KINGWEN[lo+hi*8];};
+    const n1=num(prim),h1=HEXAGRAMS[n1];
+    const loT=TRIGRAMS[prim[0]+prim[1]*2+prim[2]*4],hiT=TRIGRAMS[prim[3]+prim[4]*2+prim[5]*4];
+    const nChg=vals.filter(v=>v===6||v===9).length;
+    let h='<div class="hexlines">'+vals.map((v,i)=>`<div class="hl ${prim[i]?'':'yin'} ${(v===6||v===9)?'chg':''}"></div>`).join('')+'</div>';
+    h+=`<div class="rcard"><h4>Hexagram ${n1} · ${h1[0]} — ${h1[1]}</h4><p>${h1[2]}</p>${nChg?`<p class="tag" style="margin-top:6px">Glowing lines are changing lines — the situation is in motion.</p>`:''}</div>`;
+    h+=`<div class="rcard"><h4>🀄 The Two Trigrams</h4><p>Every hexagram is made of two three-line halves called trigrams, read from the bottom up. Your inner (lower) trigram is <b>${loT[0]} ${loT[1]}</b> — ${loT[2]}. It stands for your side of the situation: your position and your motives.</p><p style="margin-top:8px">Your outer (upper) trigram is <b>${hiT[0]} ${hiT[1]}</b> — ${hiT[2]}. It stands for the outside world: other people and circumstances.</p><p style="margin-top:8px">Together they form the picture <b>${hiT[1]} over ${loT[1]}</b>. Imagine ${hiT[1].toLowerCase()} above and ${loT[1].toLowerCase()} below — that simple image sums up your situation.</p></div>`;
+    if(hasChange){const n2=num(trans),h2=HEXAGRAMS[n2];
+      h+=`<div class="rcard"><h4>Becoming → Hexagram ${n2} · ${h2[0]} — ${h2[1]}</h4><p>${h2[2]}</p><p style="margin-top:8px">${nChg===1?'One changing line means the change is precise — a single hinge that everything turns on. Small, exact action beats big gestures.':nChg>=4?'Many changing lines mean the situation is shifting like a season. Don\'t cling to how things are — your job is to make the transition smoothly.':nChg+' changing lines mean real momentum. The first hexagram is a photo of now; this one shows where things are heading.'}</p><p class="tag" style="margin-top:6px">This is where the situation is heading if the changes run their course.</p></div>`;}
+    else h+=`<div class="rcard"><h4>A Settled Hexagram</h4><p>No lines are changing, so the oracle describes a stable situation rather than a passing phase. Treat the advice of <b>${h1[1]}</b> as the standing conditions of your question — work with it instead of waiting for it to change on its own.</p></div>`;
+    if(q)h+=`<div class="rcard"><h4>On your question</h4><p class="tag">“${esc(q)}”</p><p>The I Ching rarely gives a yes or no. It describes the moment and the attitude that fits it. Read the advice above as if a wise elder said it about your exact situation, then notice the first concrete step that comes to mind. That step is usually your answer.</p></div>`;
+    return h;
+  }};
+
+/* ===== COMPATIBILITY (all systems) ===== */
+const GEN={Wood:"Fire",Fire:"Earth",Earth:"Metal",Metal:"Water",Water:"Wood"};
+const CTRL={Wood:"Earth",Earth:"Water",Water:"Fire",Fire:"Metal",Metal:"Wood"};
+function elemRelation(a,b){
+  if(a===b)return{t:"same",txt:`You share the same <b>${a}</b> nature. You understand each other instantly — but you may also share the same blind spots.`,s:6};
+  if(GEN[a]===b)return{t:"gen",txt:`<b>${a}</b> feeds <b>${b}</b> in the five-element cycle — one of you naturally supports and energizes the other. A giving, growing pairing.`,s:12};
+  if(GEN[b]===a)return{t:"gen",txt:`<b>${b}</b> feeds <b>${a}</b> in the five-element cycle — one of you naturally supports and energizes the other. A giving, growing pairing.`,s:12};
+  if(CTRL[a]===b)return{t:"ctrl",txt:`<b>${a}</b> controls <b>${b}</b> in the five-element cycle. There is some friction here — but with respect and clear roles, it becomes structure instead of conflict.`,s:-6};
+  return{t:"ctrl",txt:`<b>${b}</b> controls <b>${a}</b> in the five-element cycle. There is some friction here — but handled with respect, it makes both of you stronger.`,s:-6};
+}
+function animalRelation(a,b){
+  if(a===b)return{txt:"You share the same zodiac animal — you feel familiar to each other and run on similar rhythms.",s:8};
+  if(a%4===b%4)return{txt:"Your animals belong to the same harmony trine (三合) — one of the luckiest pairings in Chinese astrology. You are natural allies with shared values.",s:15};
+  if(a+b===13||(a===0&&b===1)||(a===1&&b===0))return{txt:"Your animals are secret friends (六合) — a quiet, supportive bond that tradition considers very lucky.",s:15};
+  if(Math.abs(a-b)===6)return{txt:"Your animals clash directly (六冲) — expect sparks and friction as well as attraction. It can work well, but it takes patience and compromise.",s:-12};
+  return{txt:"Your animals are neutral to each other — no built-in clash, and plenty of room to write your own story.",s:4};
+}
+const CONCORD=n=>{n=reduce(n,false);return n===1||n===5||n===7?0:n===2||n===4||n===8?1:2;};
+const CONCORD_NAMES=["the Mind group (1·5·7) — thinkers and free spirits","the Builder group (2·4·8) — practical and steady hearts","the Soul group (3·6·9) — creative and feeling spirits"];
+function lifePathPair(a,b){
+  if(a===b)return{txt:`Two Life Path ${a}s — a mirror match. You understand each other easily, but you can also feed each other's weaknesses.`,s:8};
+  if(CONCORD(a)===CONCORD(b))return{txt:`Life Paths ${a} and ${b} are in the same number family: ${CONCORD_NAMES[CONCORD(a)]}. You value the same things at a deep level.`,s:12};
+  return{txt:`Life Paths ${a} and ${b} come from different number families. You approach life differently — which brings both fascination and lessons. What one lacks, the other carries.`,s:5};
+}
+function scoreLabel(s){
+  s=Math.max(22,Math.min(97,s));
+  const lab=s>=80?"✨ A Celestial Match":s>=65?"💛 Harmonious Companions":s>=50?"🌱 Growth Partners":"🔥 Karmic Teachers";
+  const note=s>=80?"Your energies fit together with unusual ease across most of the systems.":
+    s>=65?"A warm, workable match — your differences add flavor rather than trouble.":
+    s>=50?"This bond asks for effort and rewards it — you teach each other a lot.":
+    "An intense connection with real friction — and real growth, if you both choose to work with it.";
+  return{s,lab,note};
+}
+MODULES.compat={
+  icon:"💞",title:"Compatibility",tag:"Two charts, one story — BaZi · Saju · Life Path · Numerology · Destiny Code · I Ching",
+  desc:"Enter two birth details and see how your energies weave together across every system.",
+  form:'<label>Name — Person 1<input type="text" id="f-name-a" placeholder="First person"></label>'
+      +'<label>Date of birth — Person 1<input type="date" id="f-dob-a"></label>'
+      +'<label>Name — Person 2<input type="text" id="f-name-b" placeholder="Second person"></label>'
+      +'<label>Date of birth — Person 2<input type="date" id="f-dob-b"></label>',
+  run(){
+    const dobA=$('f-dob-a').value,dobB=$('f-dob-b').value;
+    if(!dobA||!dobB)return '<div class="rcard"><p>Please enter both dates of birth ✨</p></div>';
+    const nameA=($('f-name-a').value||'Person 1').trim()||'Person 1';
+    const nameB=($('f-name-b').value||'Person 2').trim()||'Person 2';
+    const[ya,ma,da]=dobA.split('-').map(Number),[yb,mb,db]=dobB.split('-').map(Number);
+    const pA=fourPillars(ya,ma,da,null),pB=fourPillars(yb,mb,db,null);
+    let score=50,h='';
+    /* --- BaZi: Day Masters --- */
+    const elA=elemOfStem(pA.day[0]),elB=elemOfStem(pB.day[0]);
+    const rel=elemRelation(elA,elB);score+=rel.s;
+    h+=`<div class="rcard"><h4>🐉 BaZi — Day Masters</h4><p>${esc(nameA)} is <b>${STEMS[pA.day[0]][0]} ${STEMS[pA.day[0]][3]}</b>; ${esc(nameB)} is <b>${STEMS[pB.day[0]][0]} ${STEMS[pB.day[0]][3]}</b>.</p><p style="margin-top:6px">${rel.txt}</p></div>`;
+    /* --- Zodiac animals --- */
+    const anA=pA.year[1],anB=pB.year[1];
+    const ar=animalRelation(anA,anB);score+=ar.s;
+    h+=`<div class="rcard"><h4>🏮 Saju / Zodiac — Year Animals</h4><p>${esc(nameA)}: <b>${BRANCHES[anA][3]}</b> (${BRANCHES[anA][0]}) · ${esc(nameB)}: <b>${BRANCHES[anB][3]}</b> (${BRANCHES[anB][0]})</p><p style="margin-top:6px">${ar.txt}</p><p style="margin-top:8px">Year animals describe your social chemistry — how your families, friends and public lives fit together. It is the first layer of compatibility, often felt within minutes of meeting.</p></div>`;
+    /* --- Spouse palace (day branches) --- */
+    const sp=animalRelation(pA.day[1],pB.day[1]);score+=Math.round(sp.s/2);
+    h+=`<div class="rcard"><h4>💍 Spouse Palaces — Day Branches</h4><p>${esc(nameA)}'s spouse palace holds the <b>${BRANCHES[pA.day[1]][3]}</b>; ${esc(nameB)}'s holds the <b>${BRANCHES[pB.day[1]][3]}</b>.</p><p style="margin-top:6px">${sp.txt}</p><p style="margin-top:8px">In Four Pillars tradition, the day branch is the marriage seat. Year animals show how you get along out in the world; day branches show how you get along at home — daily rhythm, closeness and long-term ease.</p></div>`;
+    /* --- Combined elements (Saju view) --- */
+    const cA=countElements(pA),cB=countElements(pB);
+    const comb={};for(const e in cA)comb[e]=cA[e]+cB[e];
+    const missing=Object.entries(comb).filter(([,n])=>n===0).map(([e])=>e);
+    score+=missing.length===0?8:missing.length===1?4:0;
+    h+=`<div class="rcard"><h4>🌏 Combined Elemental Chart</h4><p>Together: ${Object.entries(comb).map(([e,n])=>`${e} ${n}`).join(' · ')}</p><p style="margin-top:6px">${missing.length===0?"Together you cover all five elements — a complete little universe. Each of you fills the other's gaps.":`As a pair you are lightest in <b>${missing.join(", ")}</b> — consciously inviting ${missing.map(e=>ELEM_DESC[e].split("—")[0].trim()).join(" and ")} keeps the relationship in balance.`}</p></div>`;
+    /* --- Life Path --- */
+    const lpA=lifePathOf(dobA),lpB=lifePathOf(dobB);
+    const lp=lifePathPair(lpA,lpB);score+=lp.s;
+    const dLoveA=NUM_DETAILS[lpA]?NUM_DETAILS[lpA].love:'',dLoveB=NUM_DETAILS[lpB]?NUM_DETAILS[lpB].love:'';
+    h+=`<div class="rcard"><h4>🛤️ Life Path Numbers ${lpA} & ${lpB}</h4><p>${esc(nameA)}: ${NUM_MEANINGS[lpA].split('—')[0].trim()} · ${esc(nameB)}: ${NUM_MEANINGS[lpB].split('—')[0].trim()}</p><p style="margin-top:6px">${lp.txt}</p><p style="margin-top:8px"><b>${esc(nameA)} in love:</b> ${dLoveA}</p><p style="margin-top:8px"><b>${esc(nameB)} in love:</b> ${dLoveB}</p><p style="margin-top:8px">Compare the two love styles above. Where they name the same need, you will feel understood without trying. Where they differ is exactly where patience will be needed — on both sides.</p></div>`;
+    /* --- Numerology: Expression numbers (if names given) --- */
+    const clean=s=>s.toLowerCase().replace(/[^a-z]/g,'');
+    const na=clean($('f-name-a').value||''),nb=clean($('f-name-b').value||'');
+    if(na&&nb){
+      const exA=reduce([...na].reduce((t,c)=>t+(PYTH[c]||0),0)),exB=reduce([...nb].reduce((t,c)=>t+(PYTH[c]||0),0));
+      const sameC=CONCORD(exA)===CONCORD(exB);score+=sameC?5:2;
+      h+=`<div class="rcard"><h4>🔢 Numerology — Expression Numbers ${exA} & ${exB}</h4><p>${esc(nameA)} expresses as ${NUM_MEANINGS[exA].split('—')[0].trim()}; ${esc(nameB)} as ${NUM_MEANINGS[exB].split('—')[0].trim()}. ${sameC?"Your names are in the same number family — communication flows easily between you.":"Your names are in different number families — you express yourselves differently, so listening well matters extra."}</p></div>`;
+    }
+    /* --- Destiny Code roots --- */
+    const root=dob=>{const[y,m,d]=dob.split('-').map(Number);const r=n=>reduce(n,false);
+      const dd=String(d).padStart(2,'0'),mm=String(m).padStart(2,'0'),yy=String(y);
+      const M=r(r(+dd[0]+ +dd[1])+r(+mm[0]+ +mm[1])),N=r(r(+yy[0]+ +yy[1])+r(+yy[2]+ +yy[3]));return r(M+N);};
+    const rA=root(dobA),rB=root(dobB);
+    const rSame=CONCORD(rA)===CONCORD(rB);score+=rSame?5:2;
+    h+=`<div class="rcard"><h4>🔺 Destiny Code Roots ${rA} & ${rB}</h4><p>${esc(nameA)}'s root ${rA} (${NUM_MEANINGS[rA].split('—')[0].trim()}) meets ${esc(nameB)}'s root ${rB} (${NUM_MEANINGS[rB].split('—')[0].trim()}). ${rSame?"Same family of numbers — your core characters pull in the same direction.":"Different number families — your core characters complement more than they duplicate."}</p></div>`;
+    /* --- I Ching cast for the relationship --- */
+    const coin=()=>Math.random()<.5?3:2;
+    const vals=Array.from({length:6},()=>coin()+coin()+coin());
+    const prim=vals.map(v=>v%2);
+    const n1=KINGWEN[(prim[0]+prim[1]*2+prim[2]*4)+(prim[3]+prim[4]*2+prim[5]*4)*8];
+    const hx=HEXAGRAMS[n1];
+    h+=`<div class="rcard"><h4>☯️ I Ching — A Hexagram for This Bond</h4><div class="hexlines" style="margin:10px auto">${vals.map((v,i)=>`<div class="hl ${prim[i]?'':'yin'}"></div>`).join('')}</div><p><b>Hexagram ${n1} · ${hx[0]} — ${hx[1]}</b></p><p style="margin-top:6px">${hx[2]} Read this as advice for the current season of your relationship, not a final verdict.</p></div>`;
+    /* --- Strengths & watch-outs --- */
+    const strengths=[],watch=[];
+    if(rel.t==='gen')strengths.push('a natural give-and-receive in your core elements — one of you instinctively fuels the other');
+    if(rel.t==='same')strengths.push('deep elemental kinship — you understand each other\'s instincts without translation');
+    if(rel.t==='ctrl')watch.push('elemental friction between your Day Masters — respect and clear roles turn this from conflict into structure');
+    if(ar.s>=15)strengths.push('a blessed zodiac pairing — your social worlds and families tend to blend easily');
+    if(ar.s===8)strengths.push('same-animal familiarity — comfortable, twin-like understanding');
+    if(ar.s<0)watch.push('a zodiac clash — expect sparks in busy seasons; plan calm rituals that reset you both');
+    if(sp.s>=15)strengths.push('harmonious spouse palaces — domestic life together comes naturally');
+    if(sp.s<0)watch.push('clashing spouse palaces — home routines may need explicit negotiation rather than assumption');
+    if(lp.s>=12)strengths.push('Life Paths in the same number family — you value the same things at the deepest level');
+    if(missing.length===0)strengths.push('together you cover all five elements — a complete, self-balancing pair');
+    if(missing.length>0)watch.push(`as a couple you are light in ${missing.join(' and ')} — consciously invite those qualities into shared life`);
+    h+=`<div class="rcard"><h4>🌟 Your Strengths Together</h4><p>${strengths.length?strengths.map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join('. ')+'.':'Your strengths here are quieter than average — which usually means the bond is built by choice rather than luck. A chosen bond, looked after well, outlasts a lucky one that is neglected.'}</p></div>`;
+    h+=`<div class="rcard"><h4>🌧️ What to Watch</h4><p>${watch.length?watch.map(s=>s.charAt(0).toUpperCase()+s.slice(1)).join('. ')+'.':'Very little — the charts show no built-in friction. The main risk is taking the ease for granted. Even an easy garden needs watering.'}</p></div>`;
+    h+=`<div class="rcard"><h4>💌 Advice for the Pair</h4><p>None of the systems above is a verdict. Every combination has real couples who thrive, because charts describe conditions, not outcomes. Use your strengths as home base and the watch-points as a maintenance list. Couples who do well are rarely the perfectly matched ones — they are the ones who know their pattern and handle it kindly.</p></div>`;
+    /* --- Overall --- */
+    const fin=scoreLabel(score);
+    return `<div class="bignum">${fin.s}%</div>
+    <div class="rcard" style="text-align:center"><h4 style="font-size:1.25rem">${fin.lab}</h4><p>${fin.note}</p><p class="tag" style="margin-top:8px">The score blends seven layers: day-master elements, year animals, spouse palaces, combined elements, Life Paths, name numerology and Destiny Code roots.</p></div>`+h;
+  }};
+
+/* ---------- go-deeper links per module ---------- */
+const MORE_LINKS={
+tarot:[["Biddy Tarot","https://www.biddytarot.com/tarot-card-meanings/","in-depth upright & reversed meanings for every card"],
+["Labyrinthos","https://labyrinthos.co","free tarot lessons, guides and digital readings"],
+["Tarot.com","https://www.tarot.com","daily tarot readings and full-deck resources"]],
+angel:[["Ask-Angels.com","https://www.ask-angels.com","free angel card readings and archangel guides"],
+["Sacred Scribes","https://sacredscribesangelnumbers.blogspot.com","the classic reference for angel number meanings"]],
+numerology:[["Numerology.com","https://www.numerology.com","full name and birth-date reports"],
+["World Numerology","https://www.worldnumerology.com","Hans Decoz's detailed charts and free readings"],
+["Seventh Life Path","https://seventhlifepath.com","thorough guides to every core number"]],
+lifepath:[["Numerology.com","https://www.numerology.com","life path calculator and detailed reports"],
+["Seventh Life Path","https://seventhlifepath.com","deep dives into each life path number"],
+["Cafe Astrology — Numerology","https://www.cafeastrology.com","numerology alongside your astrological chart"]],
+destiny:[["Numerology.com","https://www.numerology.com","professional birth-date number reports"],
+["World Numerology","https://www.worldnumerology.com","full-chart readings that include pyramid-style methods"]],
+bazi:[["Joey Yap Academy","https://www.joeyyap.com","one of the best-known BaZi schools, with free chart plotting"],
+["Your Chinese Astrology","https://www.yourchineseastrology.com","free BaZi calculator with detailed interpretations"],
+["Chinese Fortune Calendar","https://www.chinesefortunecalendar.com","traditional Four Pillars references and tools"]],
+saju:[["Four Pillars of Destiny — Wikipedia","https://en.wikipedia.org/wiki/Four_Pillars_of_Destiny","the shared roots of Saju and BaZi, explained"],
+["Joey Yap Academy","https://www.joeyyap.com","professional Four Pillars chart plotting and courses"],
+["Your Chinese Astrology","https://www.yourchineseastrology.com","free pillar calculators you can cross-check"]],
+ziwei:[["Zi Wei Dou Shu — Wikipedia","https://en.wikipedia.org/w/index.php?search=Zi+Wei+Dou+Shu","how the full 12-palace, lunar-calendar system works"],
+["Joey Yap Academy","https://www.joeyyap.com","professional Zi Wei Dou Shu chart plotting"]],
+iching:[["I Ching Online","https://www.ichingonline.net","free full castings with line-by-line commentary"],
+["Cafe au Soul — I Ching","https://www.cafeausoul.com/oracles/iching","gentle modern readings of all 64 hexagrams"],
+["Sacred Texts — Legge Translation","https://sacred-texts.com/ich/","the classic full text of the Book of Changes, free"]],
+compat:[["Numerology.com","https://www.numerology.com","relationship and compatibility number reports"],
+["Chinese Fortune Calendar","https://www.chinesefortunecalendar.com","traditional zodiac compatibility references"],
+["Cafe Astrology","https://www.cafeastrology.com","astrological synastry to layer onto these readings"]]};
+function moreLinksHTML(key){
+  const L=MORE_LINKS[key];if(!L)return'';
+  return `<div class="rcard"><h4>🔗 Go Deeper</h4><p>If this reading sparked something, these independent sites offer more detailed readings and study:</p><p class="linkrow">${L.map(l=>`• <a href="${l[1]}" target="_blank" rel="noopener">${l[0]}</a> — ${l[2]}`).join('<br>')}</p><p class="tag" style="margin-top:8px">External sites are independent of this app; links open in a new tab.</p></div>`;
+}
+
+/* ---------- menu & navigation ---------- */
+const ORDER=["tarot","angel","numerology","lifepath","destiny","bazi","saju","ziwei","iching","compat"];
+const menu=$('menu');
+ORDER.forEach(k=>{const m=MODULES[k];
+  const d=document.createElement('div');d.className='mcard';
+  d.innerHTML=`<span class="ic">${m.icon}</span><h3>${m.title}</h3><p>${m.tag}</p>`;
+  d.onclick=()=>openMod(k);menu.appendChild(d);});
+let current=null;
+function openMod(k){current=k;const m=MODULES[k];
+  $('mod-title').textContent=m.icon+' '+m.title;
+  $('mod-desc').textContent=m.desc;
+  $('mod-form').innerHTML=m.form||'';
+  $('mod-result').innerHTML='';
+  $('export-row').style.display='none';
+  $('page-home').classList.remove('active');$('page-mod').classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});}
+function goHome(){$('page-mod').classList.remove('active');$('page-home').classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+$('mod-go').onclick=()=>{if(!current)return;
+  const out=MODULES[current].run();
+  const isError=out.indexOf('rcard')>=0&&out.indexOf('✨</p>')>=0&&out.length<220; // input-missing notices skip links
+  $('mod-result').innerHTML=out+(isError?'':moreLinksHTML(current));
+  $('export-row').style.display=isError?'none':'block';
+  $('mod-result').scrollIntoView({behavior:'smooth',block:'start'});};
+function exportPDF(){
+  const m=MODULES[current];
+  const today=new Date().toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});
+  $('print-date').textContent=today;
+  const old=document.title;
+  document.title='Celestial-Fortune-'+m.title.replace(/[^A-Za-z]+/g,'-')+'-'+new Date().toISOString().slice(0,10);
+  window.print(); // choose "Save as PDF" as the destination
+  setTimeout(()=>{document.title=old;},1000);
+}
+</script>
+<!-- Celestial Fortune v1.3 -->
+</body>
+</html>
